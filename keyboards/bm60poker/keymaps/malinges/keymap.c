@@ -18,7 +18,6 @@
 enum layers {
 _qwerty,
 _gamer,
-_colemak,
 _fn,
 _rgb,
 _spcfn
@@ -28,7 +27,6 @@ _spcfn
 enum keycodes {
 gamer = SAFE_RANGE,
 qwerty,
-colemak
 };
 
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
@@ -49,19 +47,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______,                            KC_SPACE,                            _______, _______, _______, _______
     ),
-    [_colemak] = LAYOUT_60_ansi(
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______,
-        _______, KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN,  _______, _______, _______,
-        _______, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,     KC_QUOT,          _______,
-        _______,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    _______, _______, _______,           _______,
-        _______, _______, _______,                            KC_SPFN,                            _______, _______, _______,  _______
-    ),
     [_fn] = LAYOUT_60_ansi(
         KC_GESC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______, _______, KC_UP,   _______, _______, _______, KC_CALC, _______, KC_INS,  _______, KC_PSCR, KC_SLCK, KC_PAUS, RESET,
         _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______, _______, _______, _______, _______, KC_HOME, KC_PGUP,          _______,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, NK_TOGG, _______, _______, KC_END,  KC_PGDN,          KC_MNXT,
-        qwerty, colemak, gamer,                            _______,                            _______, _______, _______, _______
+        qwerty,  _______, gamer,                              _______,                            _______, _______, _______, _______
     ),
     [_rgb] = LAYOUT_60_ansi(
         _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
@@ -86,13 +77,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             layer_clear();
             layer_on(_qwerty);
             set_single_persistent_default_layer(_qwerty);
-        }
-        return false;
-        break;
-      case colemak:
-        if (record->event.pressed) {
-            layer_clear();
-            layer_on(_colemak);
         }
         return false;
         break;
@@ -121,12 +105,6 @@ void rgb_matrix_indicators_kb(void)
 {
     if (!g_suspend_state && rgb_matrix_config.enable) {
         switch (get_highest_layer(layer_state)) {
-            //case _qwerty:
-            //    rgb_matrix_set_color(26, 0xFF, 0x00, 0x00);
-            //    break;
-            case _colemak:
-                rgb_matrix_set_color(55, 0xFF, 0xFF, 0xFF);
-                break;
             case _spcfn:
                 rgb_matrix_set_color(21, 0x00, 0xFF, 0x00);
                 rgb_matrix_set_color(22, 0x00, 0x00, 0xFF);
