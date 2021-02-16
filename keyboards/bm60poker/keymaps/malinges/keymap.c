@@ -62,7 +62,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     ),
     [_spcfn] = LAYOUT_60_ansi(
-        _______, SGUI(1), SGUI(2), SGUI(3), SGUI(4), SGUI(5), SGUI(6), SGUI(7), SGUI(8), SGUI(9), SGUI(0), _______, _______, KC_DEL,
+        KC_ESC,  SGUI(1), SGUI(2), SGUI(3), SGUI(4), SGUI(5), SGUI(6), SGUI(7), SGUI(8), SGUI(9), SGUI(0), _______, _______, KC_DEL,
         _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______, _______, _______, _______,
         KC_CAPS, _______, _______, _______, _______, _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,
         _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
@@ -106,6 +106,8 @@ void rgb_matrix_indicators_kb(void)
     if (!g_suspend_state && rgb_matrix_config.enable) {
         switch (get_highest_layer(layer_state)) {
             case _spcfn:
+                // Escape
+                rgb_matrix_set_color(0, 0xFF, 0x00, 0x00);
                 // Page Up and Page Down
                 rgb_matrix_set_color(20, 0x7F, 0x00, 0x7F);
                 rgb_matrix_set_color(34, 0x7F, 0x00, 0x7F);
