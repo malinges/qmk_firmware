@@ -119,7 +119,7 @@ void rgb_matrix_layer_helper (uint8_t red, uint8_t green, uint8_t blue) {
 
 void rgb_matrix_indicators_kb(void)
 {
-	if (!g_suspend_state && rgb_matrix_config.enable) {
+    if (!g_suspend_state && rgb_matrix_config.enable) {
         switch (get_highest_layer(layer_state)) {
             //case _qwerty:
             //    rgb_matrix_set_color(26, 0xFF, 0x00, 0x00);
@@ -128,10 +128,12 @@ void rgb_matrix_indicators_kb(void)
                 rgb_matrix_set_color(55, 0xFF, 0xFF, 0xFF);
                 break;
             case _spcfn:
-                rgb_matrix_set_color(22, 0xFF, 0x00, 0x00);
-                rgb_matrix_set_color(35, 0xFF, 0x00, 0x00);
-                rgb_matrix_set_color(36, 0xFF, 0x00, 0x00);
-                rgb_matrix_set_color(37, 0xFF, 0x00, 0x00);
+                rgb_matrix_set_color(21, 0x00, 0xFF, 0x00);
+                rgb_matrix_set_color(22, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(23, 0x00, 0xFF, 0x00);
+                rgb_matrix_set_color(35, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(36, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(37, 0x00, 0x00, 0xFF);
                 break;
             case _gamer:
                 rgb_matrix_set_color(16, 0xFF, 0x00, 0xFF);
