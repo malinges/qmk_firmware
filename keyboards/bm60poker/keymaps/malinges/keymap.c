@@ -149,5 +149,10 @@ void rgb_matrix_indicators_kb(void)
                 }
                 break;
         }
+
+        led_t led_state = host_keyboard_led_state();
+        if (led_state.caps_lock) {
+            rgb_matrix_set_color(28, 0xFF, 0xFF, 0xFF);
+        }
     }
 }
