@@ -108,6 +108,8 @@ void rgb_matrix_indicators_kb(void)
             case _spcfn:
                 // Escape
                 rgb_matrix_set_color(0, 0xFF, 0x00, 0x00);
+                // Caps Lock
+                rgb_matrix_set_color(28, 0x66, 0x66, 0x66);
                 // Page Up and Page Down
                 rgb_matrix_set_color(20, 0x7F, 0x00, 0x7F);
                 rgb_matrix_set_color(34, 0x7F, 0x00, 0x7F);
