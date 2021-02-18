@@ -22,12 +22,8 @@ _spcfn,
 _fn
 };
 
-
-enum keycodes {
-gamer = SAFE_RANGE
-};
-
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
+#define T_GAMER TG(_gamer)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_qwerty] = LAYOUT_60_ansi(
@@ -55,24 +51,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_fn] = LAYOUT_60_ansi(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, gamer,   XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
         XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX,                            XXXXXXX, XXXXXXX, _______, _______
     )
 };
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-      case gamer:
-        if (record->event.pressed) {
-            layer_invert(_gamer);
-        }
-        return false;
-        break;
-
-  }
-  return true;
-}
 
 void rgb_matrix_layer_helper (uint8_t red, uint8_t green, uint8_t blue) {
   for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
