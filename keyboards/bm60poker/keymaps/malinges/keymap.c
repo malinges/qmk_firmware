@@ -24,8 +24,8 @@ _fn
 
 
 enum keycodes {
-gamer = SAFE_RANGE,
-qwerty,
+qwerty = SAFE_RANGE,
+gamer
 };
 
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
