@@ -123,6 +123,12 @@ void rgb_matrix_indicators_kb(void)
                 } else {
                     rgb_matrix_set_color(47, 0xFF, 0x00, 0x00);
                 }
+                // Gamer layer toggle
+                if (layer_state_is(_gamer)) {
+                    rgb_matrix_set_color(33, 0x00, 0xFF, 0x00);
+                } else {
+                    rgb_matrix_set_color(33, 0xFF, 0x00, 0x00);
+                }
                 // Play/Pause and Next
                 rgb_matrix_set_color(41, 0x00, 0x7F, 0x7F);
                 rgb_matrix_set_color(52, 0x00, 0x7F, 0x7F);
