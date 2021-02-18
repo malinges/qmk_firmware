@@ -64,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_spcfn] = LAYOUT_60_ansi(
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
-        _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______, _______, _______, _______,
+        _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, _______,
         KC_CAPS, _______, _______, _______, _______, _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, _______, _______, _______, _______, _______,          KC_MNXT,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
@@ -117,6 +117,10 @@ void rgb_matrix_indicators_kb(void)
                 // Home and End
                 rgb_matrix_set_color(21, 0x00, 0xFF, 0x00);
                 rgb_matrix_set_color(23, 0x00, 0xFF, 0x00);
+                // Print Screen, Scroll Lock and Pause
+                rgb_matrix_set_color(24, 0x7F, 0x7f, 0x00);
+                rgb_matrix_set_color(25, 0x7F, 0x7f, 0x00);
+                rgb_matrix_set_color(26, 0x7F, 0x7f, 0x00);
                 // Arrows
                 rgb_matrix_set_color(22, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(35, 0x00, 0x00, 0xFF);
