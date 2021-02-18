@@ -88,10 +88,11 @@ void rgb_matrix_indicators_kb(void)
     if (!g_suspend_state && rgb_matrix_config.enable) {
         switch (get_highest_layer(layer_state)) {
             case _spcfn:
-                // Escape, Delete and Insert
+                // Escape and Delete
                 rgb_matrix_set_color(0, 0xFF, 0x00, 0x00);
                 rgb_matrix_set_color(13, 0xFF, 0x00, 0x00);
-                rgb_matrix_set_color(27, 0xFF, 0x00, 0x00);
+                // Insert
+                rgb_matrix_set_color(27, 0x00, 0x7F, 0x7F);
                 // Caps Lock
                 rgb_matrix_set_color(28, 0x66, 0x66, 0x66);
                 // Page Up and Page Down
