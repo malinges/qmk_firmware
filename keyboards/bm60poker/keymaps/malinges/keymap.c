@@ -48,7 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_spcfn] = LAYOUT_60_ansi(
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
-        _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, _______,
+        _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
         KC_CAPS, _______, _______, _______, _______, _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, _______, _______, _______, _______, _______,          KC_MNXT,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
@@ -98,9 +98,10 @@ void rgb_matrix_indicators_kb(void)
     if (!g_suspend_state && rgb_matrix_config.enable) {
         switch (get_highest_layer(layer_state)) {
             case _spcfn:
-                // Escape and Delete
+                // Escape, Delete and Insert
                 rgb_matrix_set_color(0, 0xFF, 0x00, 0x00);
                 rgb_matrix_set_color(13, 0xFF, 0x00, 0x00);
+                rgb_matrix_set_color(27, 0xFF, 0x00, 0x00);
                 // Caps Lock
                 rgb_matrix_set_color(28, 0x66, 0x66, 0x66);
                 // Page Up and Page Down
