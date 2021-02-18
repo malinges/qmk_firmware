@@ -49,14 +49,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
         KC_CAPS, _______, _______, _______, _______, _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,
-        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, _______, _______, _______, _______, _______,          KC_MNXT,
+        _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     ),
     [_fn] = LAYOUT_60_ansi(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, XXXXXXX, XXXXXXX, XXXXXXX, RESET,
+        XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, gamer,   XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
-        KC_LSFT,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_RSFT,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
         XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX,                            XXXXXXX, XXXXXXX, _______, _______
     )
 };
@@ -109,12 +109,6 @@ void rgb_matrix_indicators_kb(void)
                 rgb_matrix_set_color(35, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(36, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(37, 0x00, 0x00, 0xFF);
-                // Play/Pause, audio volume and Next
-                rgb_matrix_set_color(41, 0x00, 0x7F, 0x7F);
-                rgb_matrix_set_color(42, 0x00, 0x7F, 0x7F);
-                rgb_matrix_set_color(43, 0x00, 0x7F, 0x7F);
-                rgb_matrix_set_color(44, 0x00, 0x7F, 0x7F);
-                rgb_matrix_set_color(52, 0x00, 0x7F, 0x7F);
                 break;
             case _gamer:
                 rgb_matrix_set_color(16, 0xFF, 0x00, 0xFF);
@@ -128,6 +122,14 @@ void rgb_matrix_indicators_kb(void)
                 } else {
                     rgb_matrix_set_color(47, 0xFF, 0x00, 0x00);
                 }
+                // Play/Pause and Next
+                rgb_matrix_set_color(41, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(52, 0x00, 0x7F, 0x7F);
+                // Volume keys
+                rgb_matrix_set_color(42, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(43, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(44, 0x7F, 0x7F, 0x00);
+                // _fn layer keys
                 rgb_matrix_set_color(59, 0x7F, 0x7F, 0x7F);
                 rgb_matrix_set_color(60, 0x7F, 0x7F, 0x7F);
                 break;
