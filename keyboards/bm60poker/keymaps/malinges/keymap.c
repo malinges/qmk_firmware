@@ -65,7 +65,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,  SGUI(1), SGUI(2), SGUI(3), SGUI(4), SGUI(5), SGUI(6), SGUI(7), SGUI(8), SGUI(9), SGUI(0), _______, _______, KC_DEL,
         _______, _______, _______, _______, _______, _______, KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______, _______, _______, _______,
         KC_CAPS, _______, _______, _______, _______, _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,
-        _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, _______, _______, _______, _______, _______, _______, _______,          KC_MNXT,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     )
 };
@@ -121,6 +121,12 @@ void rgb_matrix_indicators_kb(void)
                 rgb_matrix_set_color(35, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(36, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(37, 0x00, 0x00, 0xFF);
+                // Play/Pause, audio volume and Next
+                rgb_matrix_set_color(41, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(42, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(43, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(44, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(52, 0x00, 0x7F, 0x7F);
                 break;
             case _gamer:
                 rgb_matrix_set_color(16, 0xFF, 0x00, 0xFF);
