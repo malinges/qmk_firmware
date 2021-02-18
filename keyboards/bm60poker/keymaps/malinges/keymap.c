@@ -117,6 +117,7 @@ void rgb_matrix_indicators_kb(void)
                 rgb_matrix_set_color(31, 0xFF, 0x00, 0xFF);
                 break;
             case _fn:
+                // NKRO toggle
                 if (keymap_config.nkro) {
                     rgb_matrix_set_color(47, 0x00, 0xFF, 0x00);
                 } else {
