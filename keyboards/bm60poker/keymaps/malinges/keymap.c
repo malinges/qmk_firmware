@@ -22,6 +22,10 @@ _spcfn,
 _fn
 };
 
+enum keycodes {
+TH_TOGG = SAFE_RANGE
+};
+
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
 #define T_GAMER TG(_gamer)
 
@@ -31,7 +35,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
         KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,
-        KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPFN,                            KC_RALT, KC_RCTL, MO(_fn), MO(_fn)
+        KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPFN,                            KC_RALT, TH_TOGG, KC_RCTL, MO(_fn)
     ),
     // Gamer standard qwerty layout but with normal space for jumping etc
     [_gamer] = LAYOUT_60_ansi(
@@ -53,9 +57,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
-        XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX,                            XXXXXXX, XXXXXXX, _______, _______
+        XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, _______
     )
 };
+
+void process_th_togg(bool th_togg) {}
+
+static bool th_togg = false;
+static uint16_t th_togg_timer = 0;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case TH_TOGG:
+            if (record->event.pressed) {
+                th_togg_timer = timer_read();
+                process_th_togg(th_togg = !th_togg);
+            } else {
+                if (timer_read() - th_togg_timer > TAPPING_TERM) {
+                    process_th_togg(th_togg = !th_togg);
+                }
+            }
+            return false;
+        default:
+            return true; // Process all other keycodes normally
+    }
+}
 
 void rgb_matrix_layer_helper (uint8_t red, uint8_t green, uint8_t blue) {
   for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
@@ -120,8 +146,7 @@ void rgb_matrix_indicators_kb(void)
                 rgb_matrix_set_color(42, 0x7F, 0x7F, 0x00);
                 rgb_matrix_set_color(43, 0x7F, 0x7F, 0x00);
                 rgb_matrix_set_color(44, 0x7F, 0x7F, 0x00);
-                // _fn layer keys
-                rgb_matrix_set_color(59, 0x7F, 0x7F, 0x7F);
+                // _fn layer key
                 rgb_matrix_set_color(60, 0x7F, 0x7F, 0x7F);
                 break;
         }
@@ -129,6 +154,10 @@ void rgb_matrix_indicators_kb(void)
         led_t led_state = host_keyboard_led_state();
         if (led_state.caps_lock) {
             rgb_matrix_set_color(28, 0xFF, 0xFF, 0xFF);
+        }
+
+        if (th_togg) {
+            rgb_matrix_set_color(58, RGB_RED);
         }
     }
 }
