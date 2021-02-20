@@ -83,17 +83,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-void rgb_matrix_layer_helper (uint8_t red, uint8_t green, uint8_t blue) {
-  for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
-    if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
-        rgb_matrix_set_color( i, red, green, blue );
+void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, uint8_t led_type) {
+    for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
+        if (HAS_FLAGS(g_led_config.flags[i], led_type)) {
+            rgb_matrix_set_color(i, red, green, blue);
+        }
     }
-  }
 }
 
-
-void rgb_matrix_indicators_kb(void)
-{
+void rgb_matrix_indicators_kb(void) {
     if (!g_suspend_state && rgb_matrix_config.enable) {
         switch (get_highest_layer(layer_state)) {
             case _spcfn:
@@ -158,6 +156,7 @@ void rgb_matrix_indicators_kb(void)
 
         if (th_togg) {
             rgb_matrix_set_color(58, RGB_RED);
+            rgb_matrix_layer_helper(RGB_RED, LED_FLAG_UNDERGLOW);
         }
     }
 }
