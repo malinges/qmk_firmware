@@ -13,6 +13,7 @@
   * You should have received a copy of the GNU General Public License
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   */
+
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 
@@ -28,18 +29,20 @@ REC_TOG = SAFE_RANGE,
 REN_TOG
 };
 
-#define RECORDING_RGB_COLOR RGB_RED
-#define RECORDING_HB_TIMEOUT 5000
-#define RECORDING_BLINK_HALF_PERIOD 500
-
-enum messages {
-    MESSAGE_HELLO,
-    MESSAGE_HEARTBEAT
+enum output_messages {
+    RECORDING_UPDATE
 };
 
-static bool recording = false;
+enum input_messages {
+    RECORDING_QUERY,
+    RECORDING_ACK
+};
+
+#define RECORDING_RGB_COLOR RGB_RED
+
+static bool local_recording = false;
+static bool remote_recording = false;
 static uint16_t rec_tog_timer = 0;
-static uint16_t recording_last_hb = 0;
 
 typedef union {
   uint32_t raw;
@@ -53,38 +56,37 @@ user_config_t user_config;
 static void send_recording(void) {
     uint8_t data[RAW_EPSIZE];
     memset(data, 0, sizeof(data));
-    data[0] = 1;
-    data[1] = recording;
+
+    data[0] = RECORDING_UPDATE;
+    data[1] = local_recording;
+
     raw_hid_send(data, sizeof(data));
 }
 
-static void set_recording(bool rec) {
-    recording = rec;
+static void set_recording(bool recording) {
+    local_recording = recording;
     send_recording();
 }
 
 static void set_recording_enabled(bool recording_enabled) {
-    set_recording(!recording_enabled);
     user_config.recording_enabled = recording_enabled;
     eeconfig_update_user(user_config.raw);
-    recording_last_hb = timer_read();
+    set_recording(remote_recording = !recording_enabled);
 }
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
-  set_recording_enabled(user_config.recording_enabled);
+  set_recording(!user_config.recording_enabled);
 }
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     if (length == 0) return;
     switch (data[0]) {
-        case MESSAGE_HEARTBEAT:
-            if (user_config.recording_enabled) {
-                recording_last_hb = timer_read();
-            }
-            break;
-        case MESSAGE_HELLO:
+        case RECORDING_QUERY:
             send_recording();
+            break;
+        case RECORDING_ACK:
+            remote_recording = data[1] != 0;
             break;
     }
 }
@@ -130,10 +132,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (user_config.recording_enabled) {
                 if (record->event.pressed) {
                     rec_tog_timer = timer_read();
-                    set_recording(!recording);
+                    set_recording(!local_recording);
                 } else {
                     if (timer_read() - rec_tog_timer > TAPPING_TERM) {
-                        set_recording(!recording);
+                        set_recording(!local_recording);
                     }
                 }
             }
@@ -156,24 +158,14 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
     }
 }
 
-static void recording_rgb(bool on) {
-    if (on) {
-        rgb_matrix_set_color(58, RECORDING_RGB_COLOR);
-        rgb_matrix_layer_helper(RECORDING_RGB_COLOR, LED_FLAG_UNDERGLOW);
-    }
-}
-
 void rgb_matrix_indicators_user(void) {
     if (!g_suspend_state && rgb_matrix_config.enable) {
         if (user_config.recording_enabled) {
-            uint16_t timer = timer_read();
-            if (timer - recording_last_hb > RECORDING_HB_TIMEOUT) {
-                while (timer - recording_last_hb - RECORDING_HB_TIMEOUT > RECORDING_BLINK_HALF_PERIOD * 2) {
-                    recording_last_hb += RECORDING_BLINK_HALF_PERIOD * 2;
-                }
-                recording_rgb(((timer - recording_last_hb) / RECORDING_BLINK_HALF_PERIOD) % 2);
-            } else {
-                recording_rgb(recording);
+            if (local_recording) {
+                rgb_matrix_set_color(58, RECORDING_RGB_COLOR);
+            }
+            if (remote_recording) {
+                rgb_matrix_layer_helper(RECORDING_RGB_COLOR, LED_FLAG_UNDERGLOW);
             }
         }
 
