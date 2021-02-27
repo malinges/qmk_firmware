@@ -122,7 +122,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
-        XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX,                            XXXXXXX, REN_TOG, XXXXXXX, _______
+        XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     )
 };
 
@@ -226,6 +226,8 @@ void rgb_matrix_indicators_user(void) {
                 rgb_matrix_set_color(42, 0x7F, 0x7F, 0x00);
                 rgb_matrix_set_color(43, 0x7F, 0x7F, 0x00);
                 rgb_matrix_set_color(44, 0x7F, 0x7F, 0x00);
+                // Space key
+                rgb_matrix_set_color(56, RGB_BLUE);
                 // _fn layer key
                 rgb_matrix_set_color(60, 0x7F, 0x7F, 0x7F);
                 break;
