@@ -202,11 +202,13 @@ void rgb_matrix_indicators_user(void) {
                 break;
             case _fn:
                 // Dynamic macro keys
-                rgb_matrix_set_color(0, 0x7f, 0x7f, 0x00);
-                rgb_matrix_set_color(1, 0x7f, 0x00, 0x7f);
-                rgb_matrix_set_color(2, 0x7f, 0x00, 0x7f);
-                rgb_matrix_set_color(3, 0x00, 0x7f, 0x7f);
-                rgb_matrix_set_color(4, 0x00, 0x7f, 0x7f);
+                rgb_matrix_set_color(0, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(1, 0x7F, 0x00, 0x7F);
+                rgb_matrix_set_color(2, 0x7F, 0x00, 0x7F);
+                rgb_matrix_set_color(3, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(4, 0x00, 0x7F, 0x7F);
+                // RESET key
+                rgb_matrix_set_color(27, 0xFF, 0x00, 0x00);
                 // NKRO toggle
                 if (keymap_config.nkro) {
                     rgb_matrix_set_color(47, 0x00, 0xFF, 0x00);
