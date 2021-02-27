@@ -118,7 +118,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     ),
     [_fn] = LAYOUT_60_ansi(
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
@@ -201,6 +201,12 @@ void rgb_matrix_indicators_user(void) {
                 rgb_matrix_set_color(31, 0xFF, 0x00, 0xFF);
                 break;
             case _fn:
+                // Dynamic macro keys
+                rgb_matrix_set_color(0, 0x7f, 0x7f, 0x00);
+                rgb_matrix_set_color(1, 0x7f, 0x00, 0x7f);
+                rgb_matrix_set_color(2, 0x7f, 0x00, 0x7f);
+                rgb_matrix_set_color(3, 0x00, 0x7f, 0x7f);
+                rgb_matrix_set_color(4, 0x00, 0x7f, 0x7f);
                 // NKRO toggle
                 if (keymap_config.nkro) {
                     rgb_matrix_set_color(47, 0x00, 0xFF, 0x00);
