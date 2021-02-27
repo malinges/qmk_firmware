@@ -21,6 +21,7 @@ enum layers {
 _qwerty,
 _gamer,
 _spcfn,
+_mouse,
 _fn
 };
 
@@ -93,6 +94,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
 #define T_GAMER TG(_gamer)
+#define T_MOUSE TG(_mouse)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_qwerty] = LAYOUT_60_ansi(
@@ -117,11 +119,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     ),
+    [_mouse] = LAYOUT_60_ansi(
+        XXXXXXX, KC_ACL0, KC_ACL1, KC_ACL2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_WH_U, KC_BTN1, KC_MS_U, KC_BTN2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,          _______,
+        _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
+        _______, _______, _______,                            XXXXXXX,                            _______, _______, _______, _______
+    ),
     [_fn] = LAYOUT_60_ansi(
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
-        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     )
 };
@@ -170,6 +179,29 @@ void rgb_matrix_indicators_user(void) {
         }
 
         switch (get_highest_layer(layer_state)) {
+            case _gamer:
+                rgb_matrix_set_color(16, 0xFF, 0x00, 0xFF);
+                rgb_matrix_set_color(29, 0xFF, 0x00, 0xFF);
+                rgb_matrix_set_color(30, 0xFF, 0x00, 0xFF);
+                rgb_matrix_set_color(31, 0xFF, 0x00, 0xFF);
+                break;
+            case _mouse:
+                // Mouse speed
+                rgb_matrix_set_color(1, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(2, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(3, 0x7F, 0x7F, 0x00);
+                // Scroll up and scroll down
+                rgb_matrix_set_color(20, 0x7F, 0x00, 0x7F);
+                rgb_matrix_set_color(34, 0x7F, 0x00, 0x7F);
+                // Left and right click
+                rgb_matrix_set_color(21, 0x00, 0xFF, 0x00);
+                rgb_matrix_set_color(23, 0x00, 0xFF, 0x00);
+                // Mouse movement
+                rgb_matrix_set_color(22, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(35, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(36, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(37, 0x00, 0x00, 0xFF);
+                break;
             case _spcfn:
                 // Escape and Delete
                 rgb_matrix_set_color(0, 0xFF, 0x00, 0x00);
@@ -184,21 +216,15 @@ void rgb_matrix_indicators_user(void) {
                 // Home and End
                 rgb_matrix_set_color(21, 0x00, 0xFF, 0x00);
                 rgb_matrix_set_color(23, 0x00, 0xFF, 0x00);
-                // Print Screen, Scroll Lock and Pause
-                rgb_matrix_set_color(24, 0x7F, 0x7f, 0x00);
-                rgb_matrix_set_color(25, 0x7F, 0x7f, 0x00);
-                rgb_matrix_set_color(26, 0x7F, 0x7f, 0x00);
                 // Arrows
                 rgb_matrix_set_color(22, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(35, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(36, 0x00, 0x00, 0xFF);
                 rgb_matrix_set_color(37, 0x00, 0x00, 0xFF);
-                break;
-            case _gamer:
-                rgb_matrix_set_color(16, 0xFF, 0x00, 0xFF);
-                rgb_matrix_set_color(29, 0xFF, 0x00, 0xFF);
-                rgb_matrix_set_color(30, 0xFF, 0x00, 0xFF);
-                rgb_matrix_set_color(31, 0xFF, 0x00, 0xFF);
+                // Print Screen, Scroll Lock and Pause
+                rgb_matrix_set_color(24, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(25, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(26, 0x7F, 0x7F, 0x00);
                 break;
             case _fn:
                 // Dynamic macro keys
@@ -220,6 +246,12 @@ void rgb_matrix_indicators_user(void) {
                     rgb_matrix_set_color(33, 0x00, 0xFF, 0x00);
                 } else {
                     rgb_matrix_set_color(33, 0xFF, 0x00, 0x00);
+                }
+                // Mouse layer toggle
+                if (layer_state_is(_mouse)) {
+                    rgb_matrix_set_color(48, 0x00, 0xFF, 0x00);
+                } else {
+                    rgb_matrix_set_color(48, 0xFF, 0x00, 0x00);
                 }
                 // Recording enabled toggle
                 if (user_config.recording_enabled) {
