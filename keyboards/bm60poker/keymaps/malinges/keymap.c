@@ -27,11 +27,13 @@ _fn
 
 enum keycodes {
 REC_TOG = SAFE_RANGE,
-REN_TOG
+REN_TOG,
+WPM_TOG
 };
 
 enum output_messages {
-    RECORDING_UPDATE
+    RECORDING_UPDATE,
+    WPM_UPDATE
 };
 
 enum input_messages {
@@ -39,29 +41,31 @@ enum input_messages {
     RECORDING_ACK
 };
 
+typedef union {
+  uint32_t raw;
+  struct {
+    bool recording_enabled:1;
+    bool wpm_enabled:1;
+  };
+} user_config_t;
+
+user_config_t user_config;
+
+static uint8_t hid_buf[RAW_EPSIZE];
+
 #define RECORDING_RGB_COLOR RGB_RED
 
 static bool local_recording = false;
 static bool remote_recording = false;
 static uint16_t rec_tog_timer = 0;
 
-typedef union {
-  uint32_t raw;
-  struct {
-    bool recording_enabled:1;
-  };
-} user_config_t;
-
-user_config_t user_config;
-
 static void send_recording(void) {
-    uint8_t data[RAW_EPSIZE];
-    memset(data, 0, sizeof(data));
+    memset(hid_buf, 0, sizeof(hid_buf));
 
-    data[0] = RECORDING_UPDATE;
-    data[1] = local_recording;
+    hid_buf[0] = RECORDING_UPDATE;
+    hid_buf[1] = local_recording;
 
-    raw_hid_send(data, sizeof(data));
+    raw_hid_send(hid_buf, sizeof(hid_buf));
 }
 
 static void set_recording(bool recording) {
@@ -90,6 +94,32 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             remote_recording = data[1] != 0;
             break;
     }
+}
+
+static uint16_t wpm_timer = 0;
+static uint8_t wpm_last = 0;
+
+static void send_wpm(uint8_t wpm) {
+    wpm_timer = timer_read();
+
+    memset(hid_buf, 0, sizeof(hid_buf));
+
+    hid_buf[0] = WPM_UPDATE;
+    hid_buf[1] = wpm;
+
+    raw_hid_send(hid_buf, sizeof(hid_buf));
+}
+
+static void process_wpm(uint8_t wpm) {
+    if (wpm_last != 0 || wpm != 0) {
+        send_wpm(wpm);
+    }
+    wpm_last = wpm;
+}
+
+static void set_wpm_enabled(bool wpm_enabled) {
+    user_config.wpm_enabled = wpm_enabled;
+    eeconfig_update_user(user_config.raw);
 }
 
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
@@ -128,7 +158,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_fn] = LAYOUT_60_ansi(
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        XXXXXXX, RGB_TOG, XXXXXXX, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
+        XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          KC_MNXT,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
@@ -143,7 +173,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     rec_tog_timer = timer_read();
                     set_recording(!local_recording);
                 } else {
-                    if (timer_read() - rec_tog_timer > TAPPING_TERM) {
+                    if (timer_elapsed(rec_tog_timer) > TAPPING_TERM) {
                         set_recording(!local_recording);
                     }
                 }
@@ -154,8 +184,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 set_recording_enabled(!user_config.recording_enabled);
             }
             return false;
+        case WPM_TOG:
+            if (record->event.pressed) {
+                set_wpm_enabled(!user_config.wpm_enabled);
+            }
+            return false;
         default:
             return true; // Process all other keycodes normally
+    }
+}
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (user_config.wpm_enabled && record->event.pressed) {
+        process_wpm(get_current_wpm());
     }
 }
 
@@ -168,6 +209,10 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
 }
 
 void rgb_matrix_indicators_user(void) {
+    if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
+        process_wpm(get_current_wpm());
+    }
+
     if (!g_suspend_state && rgb_matrix_config.enable) {
         if (user_config.recording_enabled) {
             if (local_recording) {
@@ -258,6 +303,12 @@ void rgb_matrix_indicators_user(void) {
                     rgb_matrix_set_color(58, RGB_GREEN);
                 } else {
                     rgb_matrix_set_color(58, RGB_RED);
+                }
+                // WPM enabled toggle
+                if (user_config.wpm_enabled) {
+                    rgb_matrix_set_color(16, RGB_GREEN);
+                } else {
+                    rgb_matrix_set_color(16, RGB_RED);
                 }
                 // Play/Pause and Next
                 rgb_matrix_set_color(41, 0x00, 0x7F, 0x7F);
