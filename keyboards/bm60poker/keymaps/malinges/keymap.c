@@ -96,30 +96,31 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     }
 }
 
-static void send_wpm_keypress(void) {
+static uint16_t wpm_timer = 0;
+static uint8_t wpm_last = 0;
+
+static void send_wpm(uint8_t wpm, bool is_keypress) {
+    wpm_timer = timer_read();
+    wpm_last = wpm;
+
     memset(hid_buf, 0, sizeof(hid_buf));
 
     hid_buf[0] = WPM_KEYPRESS;
+    hid_buf[1] = wpm;
+    hid_buf[2] = is_keypress;
 
     raw_hid_send(hid_buf, sizeof(hid_buf));
+}
+
+static void process_wpm(uint8_t wpm, bool is_keypress) {
+    if (wpm_last != 0 || wpm != 0 || is_keypress) {
+        send_wpm(wpm, is_keypress);
+    }
 }
 
 static void set_wpm_enabled(bool wpm_enabled) {
     user_config.wpm_enabled = wpm_enabled;
     eeconfig_update_user(user_config.raw);
-}
-
-static bool is_wpm_keycode(uint16_t keycode) {
-    if ((keycode >= QK_MOD_TAP && keycode <= QK_MOD_TAP_MAX) || (keycode >= QK_LAYER_TAP && keycode <= QK_LAYER_TAP_MAX) || (keycode >= QK_MODS && keycode <= QK_MODS_MAX)) {
-        keycode = keycode & 0xFF;
-    } else if (keycode > 0xFF) {
-        keycode = 0;
-    }
-    if ((keycode >= KC_A && keycode <= KC_0) || (keycode >= KC_TAB && keycode <= KC_SLASH)) {
-        return true;
-    }
-
-    return false;
 }
 
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
@@ -195,8 +196,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (user_config.wpm_enabled && record->event.pressed && is_wpm_keycode(keycode)) {
-        send_wpm_keypress();
+    if (user_config.wpm_enabled && record->event.pressed && wpm_keycode_user(keycode)) {
+        process_wpm(get_current_wpm(), true);
     }
 }
 
@@ -209,6 +210,10 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
 }
 
 void rgb_matrix_indicators_user(void) {
+    if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
+        process_wpm(get_current_wpm(), false);
+    }
+
     if (!g_suspend_state && rgb_matrix_config.enable) {
         if (user_config.recording_enabled) {
             if (local_recording) {
