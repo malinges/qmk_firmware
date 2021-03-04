@@ -271,6 +271,8 @@ void rgb_matrix_indicators_user(void) {
                 rgb_matrix_set_color(24, 0x7F, 0x7F, 0x00);
                 rgb_matrix_set_color(25, 0x7F, 0x7F, 0x00);
                 rgb_matrix_set_color(26, 0x7F, 0x7F, 0x00);
+                // _spcfn layer key
+                rgb_matrix_set_color(56, 0xFF, 0xFF, 0xFF);
                 break;
             case _fn:
                 // Dynamic macro keys
