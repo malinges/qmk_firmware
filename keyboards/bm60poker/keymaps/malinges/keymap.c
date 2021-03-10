@@ -18,27 +18,27 @@
 #include "raw_hid.h"
 
 enum layers {
-_qwerty,
-_gamer,
-_spcfn,
-_mouse,
-_fn
+    _qwerty,
+    _gamer,
+    _spcfn,
+    _mouse,
+    _fn,
 };
 
 enum keycodes {
-REC_TOG = SAFE_RANGE,
-REN_TOG,
-WPM_TOG
+    REC_TOG = SAFE_RANGE,
+    REN_TOG,
+    WPM_TOG,
 };
 
 enum output_messages {
     RECORDING_UPDATE,
-    WPM_KEYPRESS
+    WPM_KEYPRESS,
 };
 
 enum input_messages {
     RECORDING_QUERY,
-    RECORDING_ACK
+    RECORDING_ACK,
 };
 
 typedef union {
