@@ -177,9 +177,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
-        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, XXXXXXX, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
-    )
+    ),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -293,6 +293,12 @@ void rgb_matrix_indicators_user(void) {
             case _fn:
                 // RESET key
                 rgb_matrix_set_color(LL_BSLASH, 0xFF, 0x00, 0x00);
+                // NKRO toggle
+                if (keymap_config.nkro) {
+                    rgb_matrix_set_color(LL_N, 0x00, 0xFF, 0x00);
+                } else {
+                    rgb_matrix_set_color(LL_N, 0xFF, 0x00, 0x00);
+                }
                 // Gamer layer toggle
                 if (layer_state_is(_gamer)) {
                     rgb_matrix_set_color(LL_G, 0x00, 0xFF, 0x00);

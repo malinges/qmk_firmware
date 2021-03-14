@@ -1,3 +1,4 @@
+NKRO_ENABLE = yes
 LTO_ENABLE = yes
 RAW_ENABLE = yes
 WPM_ENABLE = yes
