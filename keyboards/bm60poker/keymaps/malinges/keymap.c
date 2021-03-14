@@ -225,6 +225,12 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
     }
 }
 
+#define RGB_DIM_MAGENTA 0x7F, 0x00, 0x7F
+#define RGB_DIM_YELLOW 0x7F, 0x7F, 0x00
+#define RGB_DIM_CYAN 0x00, 0x7F, 0x7F
+#define RGB_DIM_WHITE 0x7F, 0x7F, 0x7F
+#define RGB_DIMMER_WHITE 0x66, 0x66, 0x66
+
 void rgb_matrix_indicators_user(void) {
     if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
         process_wpm(get_current_wpm(), false);
@@ -242,74 +248,74 @@ void rgb_matrix_indicators_user(void) {
 
         switch (get_highest_layer(layer_state)) {
             case _gamer:
-                rgb_matrix_set_color(LL_W, 0xFF, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_A, 0xFF, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_S, 0xFF, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_D, 0xFF, 0x00, 0xFF);
+                rgb_matrix_set_color(LL_W, RGB_MAGENTA);
+                rgb_matrix_set_color(LL_A, RGB_MAGENTA);
+                rgb_matrix_set_color(LL_S, RGB_MAGENTA);
+                rgb_matrix_set_color(LL_D, RGB_MAGENTA);
                 break;
             case _mouse:
                 // Mouse speed
-                rgb_matrix_set_color(LL_1, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(LL_2, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(LL_3, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(LL_1, RGB_DIM_YELLOW);
+                rgb_matrix_set_color(LL_2, RGB_DIM_YELLOW);
+                rgb_matrix_set_color(LL_3, RGB_DIM_YELLOW);
                 // Scroll up and scroll down
-                rgb_matrix_set_color(LL_Y, 0x7F, 0x00, 0x7F);
-                rgb_matrix_set_color(LL_H, 0x7F, 0x00, 0x7F);
+                rgb_matrix_set_color(LL_Y, RGB_DIM_MAGENTA);
+                rgb_matrix_set_color(LL_H, RGB_DIM_MAGENTA);
                 // Left and right click
-                rgb_matrix_set_color(LL_U, 0x00, 0xFF, 0x00);
-                rgb_matrix_set_color(LL_O, 0x00, 0xFF, 0x00);
+                rgb_matrix_set_color(LL_U, RGB_GREEN);
+                rgb_matrix_set_color(LL_O, RGB_GREEN);
                 // Mouse movement
-                rgb_matrix_set_color(LL_I, 0x00, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_J, 0x00, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_K, 0x00, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_L, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(LL_I, RGB_BLUE);
+                rgb_matrix_set_color(LL_J, RGB_BLUE);
+                rgb_matrix_set_color(LL_K, RGB_BLUE);
+                rgb_matrix_set_color(LL_L, RGB_BLUE);
                 break;
             case _spcfn:
                 // Escape and Delete
-                rgb_matrix_set_color(LL_ESCAPE, 0xFF, 0x00, 0x00);
-                rgb_matrix_set_color(LL_BSPACE, 0xFF, 0x00, 0x00);
+                rgb_matrix_set_color(LL_ESCAPE, RGB_RED);
+                rgb_matrix_set_color(LL_BSPACE, RGB_RED);
                 // Insert
-                rgb_matrix_set_color(LL_BSLASH, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(LL_BSLASH, RGB_DIM_CYAN);
                 // Caps Lock
-                rgb_matrix_set_color(LL_CAPSLOCK, 0x66, 0x66, 0x66);
+                rgb_matrix_set_color(LL_CAPSLOCK, RGB_DIMMER_WHITE);
                 // Page Up and Page Down
-                rgb_matrix_set_color(LL_Y, 0x7F, 0x00, 0x7F);
-                rgb_matrix_set_color(LL_H, 0x7F, 0x00, 0x7F);
+                rgb_matrix_set_color(LL_Y, RGB_DIM_MAGENTA);
+                rgb_matrix_set_color(LL_H, RGB_DIM_MAGENTA);
                 // Home and End
-                rgb_matrix_set_color(LL_U, 0x00, 0xFF, 0x00);
-                rgb_matrix_set_color(LL_O, 0x00, 0xFF, 0x00);
+                rgb_matrix_set_color(LL_U, RGB_GREEN);
+                rgb_matrix_set_color(LL_O, RGB_GREEN);
                 // Arrows
-                rgb_matrix_set_color(LL_I, 0x00, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_J, 0x00, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_K, 0x00, 0x00, 0xFF);
-                rgb_matrix_set_color(LL_L, 0x00, 0x00, 0xFF);
+                rgb_matrix_set_color(LL_I, RGB_BLUE);
+                rgb_matrix_set_color(LL_J, RGB_BLUE);
+                rgb_matrix_set_color(LL_K, RGB_BLUE);
+                rgb_matrix_set_color(LL_L, RGB_BLUE);
                 // Print Screen, Scroll Lock and Pause
-                rgb_matrix_set_color(LL_P, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(LL_LBRACKET, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(LL_RBRACKET, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(LL_P, RGB_DIM_YELLOW);
+                rgb_matrix_set_color(LL_LBRACKET, RGB_DIM_YELLOW);
+                rgb_matrix_set_color(LL_RBRACKET, RGB_DIM_YELLOW);
                 // _spcfn layer key
-                rgb_matrix_set_color(LL_SPACE, 0xFF, 0xFF, 0xFF);
+                rgb_matrix_set_color(LL_SPACE, RGB_WHITE);
                 break;
             case _fn:
                 // RESET key
-                rgb_matrix_set_color(LL_BSLASH, 0xFF, 0x00, 0x00);
+                rgb_matrix_set_color(LL_BSLASH, RGB_RED);
                 // NKRO toggle
                 if (keymap_config.nkro) {
-                    rgb_matrix_set_color(LL_N, 0x00, 0xFF, 0x00);
+                    rgb_matrix_set_color(LL_N, RGB_GREEN);
                 } else {
-                    rgb_matrix_set_color(LL_N, 0xFF, 0x00, 0x00);
+                    rgb_matrix_set_color(LL_N, RGB_RED);
                 }
                 // Gamer layer toggle
                 if (layer_state_is(_gamer)) {
-                    rgb_matrix_set_color(LL_G, 0x00, 0xFF, 0x00);
+                    rgb_matrix_set_color(LL_G, RGB_GREEN);
                 } else {
-                    rgb_matrix_set_color(LL_G, 0xFF, 0x00, 0x00);
+                    rgb_matrix_set_color(LL_G, RGB_RED);
                 }
                 // Mouse layer toggle
                 if (layer_state_is(_mouse)) {
-                    rgb_matrix_set_color(LL_M, 0x00, 0xFF, 0x00);
+                    rgb_matrix_set_color(LL_M, RGB_GREEN);
                 } else {
-                    rgb_matrix_set_color(LL_M, 0xFF, 0x00, 0x00);
+                    rgb_matrix_set_color(LL_M, RGB_RED);
                 }
                 // Recording enabled toggle
                 if (user_config.recording_enabled) {
@@ -324,22 +330,22 @@ void rgb_matrix_indicators_user(void) {
                     rgb_matrix_set_color(LL_W, RGB_RED);
                 }
                 // Play/Pause and Next
-                rgb_matrix_set_color(LL_LSHIFT, 0x00, 0x7F, 0x7F);
-                rgb_matrix_set_color(LL_RSHIFT, 0x00, 0x7F, 0x7F);
+                rgb_matrix_set_color(LL_LSHIFT, RGB_DIM_CYAN);
+                rgb_matrix_set_color(LL_RSHIFT, RGB_DIM_CYAN);
                 // Volume keys
-                rgb_matrix_set_color(LL_Z, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(LL_X, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(LL_C, 0x7F, 0x7F, 0x00);
+                rgb_matrix_set_color(LL_Z, RGB_DIM_YELLOW);
+                rgb_matrix_set_color(LL_X, RGB_DIM_YELLOW);
+                rgb_matrix_set_color(LL_C, RGB_DIM_YELLOW);
                 // Space key
                 rgb_matrix_set_color(LL_SPACE, RGB_BLUE);
                 // _fn layer key
-                rgb_matrix_set_color(LL_FN, 0x7F, 0x7F, 0x7F);
+                rgb_matrix_set_color(LL_FN, RGB_DIM_WHITE);
                 break;
         }
 
         led_t led_state = host_keyboard_led_state();
         if (led_state.caps_lock) {
-            rgb_matrix_set_color(28, 0xFF, 0xFF, 0xFF);
+            rgb_matrix_set_color(28, RGB_WHITE);
         }
     }
 }
