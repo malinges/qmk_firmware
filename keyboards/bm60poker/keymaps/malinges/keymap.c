@@ -231,6 +231,15 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
 #define RGB_DIM_WHITE 0x7F, 0x7F, 0x7F
 #define RGB_DIMMER_WHITE 0x66, 0x66, 0x66
 
+#define rgb_matrix_set_toggle(led_index, toggle_expr)   \
+    do {                                                \
+        if (toggle_expr) {                              \
+            rgb_matrix_set_color(led_index, RGB_GREEN); \
+        } else {                                        \
+            rgb_matrix_set_color(led_index, RGB_RED);   \
+        }                                               \
+    } while (0)
+
 void rgb_matrix_indicators_user(void) {
     if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
         process_wpm(get_current_wpm(), false);
@@ -300,35 +309,15 @@ void rgb_matrix_indicators_user(void) {
                 // RESET key
                 rgb_matrix_set_color(LL_BSLASH, RGB_RED);
                 // NKRO toggle
-                if (keymap_config.nkro) {
-                    rgb_matrix_set_color(LL_N, RGB_GREEN);
-                } else {
-                    rgb_matrix_set_color(LL_N, RGB_RED);
-                }
+                rgb_matrix_set_toggle(LL_N, keymap_config.nkro);
                 // Gamer layer toggle
-                if (layer_state_is(_gamer)) {
-                    rgb_matrix_set_color(LL_G, RGB_GREEN);
-                } else {
-                    rgb_matrix_set_color(LL_G, RGB_RED);
-                }
+                rgb_matrix_set_toggle(LL_G, layer_state_is(_gamer));
                 // Mouse layer toggle
-                if (layer_state_is(_mouse)) {
-                    rgb_matrix_set_color(LL_M, RGB_GREEN);
-                } else {
-                    rgb_matrix_set_color(LL_M, RGB_RED);
-                }
+                rgb_matrix_set_toggle(LL_M, layer_state_is(_mouse));
                 // Recording enabled toggle
-                if (user_config.recording_enabled) {
-                    rgb_matrix_set_color(LL_MENU, RGB_GREEN);
-                } else {
-                    rgb_matrix_set_color(LL_MENU, RGB_RED);
-                }
+                rgb_matrix_set_toggle(LL_MENU, user_config.recording_enabled);
                 // WPM enabled toggle
-                if (user_config.wpm_enabled) {
-                    rgb_matrix_set_color(LL_W, RGB_GREEN);
-                } else {
-                    rgb_matrix_set_color(LL_W, RGB_RED);
-                }
+                rgb_matrix_set_toggle(LL_W, user_config.wpm_enabled);
                 // Play/Pause and Next
                 rgb_matrix_set_color(LL_LSHIFT, RGB_DIM_CYAN);
                 rgb_matrix_set_color(LL_RSHIFT, RGB_DIM_CYAN);
