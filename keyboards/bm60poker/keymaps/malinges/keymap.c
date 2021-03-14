@@ -14,8 +14,10 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-#include QMK_KEYBOARD_H
+#include <string.h>
 #include "raw_hid.h"
+#include "usb_descriptor.h"
+#include QMK_KEYBOARD_H
 
 enum layers {
     _qwerty,
@@ -84,8 +86,12 @@ static void set_recording_enabled(bool recording_enabled) {
 }
 
 void keyboard_post_init_user(void) {
-  user_config.raw = eeconfig_read_user();
-  set_recording(!user_config.recording_enabled);
+    debug_enable = true;
+    // debug_matrix = true;
+    // debug_keyboard = true;
+    // debug_mouse = true;
+    user_config.raw = eeconfig_read_user();
+    set_recording(!user_config.recording_enabled);
 }
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
@@ -167,10 +173,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            XXXXXXX,                            _______, _______, _______, _______
     ),
     [_fn] = LAYOUT_60_ansi(
-        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
-        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, XXXXXXX, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     )
 };
@@ -284,20 +290,8 @@ void rgb_matrix_indicators_user(void) {
                 rgb_matrix_set_color(56, 0xFF, 0xFF, 0xFF);
                 break;
             case _fn:
-                // Dynamic macro keys
-                rgb_matrix_set_color(0, 0x7F, 0x7F, 0x00);
-                rgb_matrix_set_color(1, 0x7F, 0x00, 0x7F);
-                rgb_matrix_set_color(2, 0x7F, 0x00, 0x7F);
-                rgb_matrix_set_color(3, 0x00, 0x7F, 0x7F);
-                rgb_matrix_set_color(4, 0x00, 0x7F, 0x7F);
                 // RESET key
                 rgb_matrix_set_color(27, 0xFF, 0x00, 0x00);
-                // NKRO toggle
-                if (keymap_config.nkro) {
-                    rgb_matrix_set_color(47, 0x00, 0xFF, 0x00);
-                } else {
-                    rgb_matrix_set_color(47, 0xFF, 0x00, 0x00);
-                }
                 // Gamer layer toggle
                 if (layer_state_is(_gamer)) {
                     rgb_matrix_set_color(33, 0x00, 0xFF, 0x00);
