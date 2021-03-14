@@ -207,6 +207,20 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+#define RGB_DIM_MAGENTA 0x7F, 0x00, 0x7F
+#define RGB_DIM_YELLOW 0x7F, 0x7F, 0x00
+#define RGB_DIM_CYAN 0x00, 0x7F, 0x7F
+#define RGB_DIM_WHITE 0x7F, 0x7F, 0x7F
+#define RGB_DIMMER_WHITE 0x66, 0x66, 0x66
+
+static void rgb_matrix_set_toggle(int led_index, bool toggle_enabled) {
+    if (toggle_enabled) {
+        rgb_matrix_set_color(led_index, RGB_GREEN);
+    } else {
+        rgb_matrix_set_color(led_index, RGB_RED);
+    }
+}
+
 static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, uint8_t led_type) {
     for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
         if (HAS_FLAGS(g_led_config.flags[i], led_type)) {
@@ -214,21 +228,6 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
         }
     }
 }
-
-#define RGB_DIM_MAGENTA 0x7F, 0x00, 0x7F
-#define RGB_DIM_YELLOW 0x7F, 0x7F, 0x00
-#define RGB_DIM_CYAN 0x00, 0x7F, 0x7F
-#define RGB_DIM_WHITE 0x7F, 0x7F, 0x7F
-#define RGB_DIMMER_WHITE 0x66, 0x66, 0x66
-
-#define rgb_matrix_set_toggle(led_index, toggle_expr)   \
-    do {                                                \
-        if (toggle_expr) {                              \
-            rgb_matrix_set_color(led_index, RGB_GREEN); \
-        } else {                                        \
-            rgb_matrix_set_color(led_index, RGB_RED);   \
-        }                                               \
-    } while (0)
 
 void rgb_matrix_indicators_user(void) {
     if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
