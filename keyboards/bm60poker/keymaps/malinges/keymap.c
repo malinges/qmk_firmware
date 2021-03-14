@@ -22,7 +22,6 @@
 
 enum layers {
     _qwerty,
-    _gamer,
     _spcfn,
     _mouse,
     _fn,
@@ -135,7 +134,6 @@ static void set_wpm_enabled(bool wpm_enabled) {
 }
 
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
-#define T_GAMER TG(_gamer)
 #define T_MOUSE TG(_mouse)
 #define NXT_PRV TD(TD_M_NXT_PRV)
 
@@ -150,14 +148,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPFN,                            KC_RALT, REC_TOG, KC_RCTL, MO(_fn)
-    ),
-    // Gamer standard qwerty layout but with normal space for jumping etc
-    [_gamer] = LAYOUT_60_ansi(
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______, _______, _______,                            KC_SPACE,                           _______, _______, _______, _______
     ),
     [_spcfn] = LAYOUT_60_ansi(
         KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
@@ -176,7 +166,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_fn] = LAYOUT_60_ansi(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
         XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,XXXXXXX, XXXXXXX, RESET,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, T_GAMER, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     ),
@@ -256,12 +246,6 @@ void rgb_matrix_indicators_user(void) {
         }
 
         switch (get_highest_layer(layer_state)) {
-            case _gamer:
-                rgb_matrix_set_color(LL_W, RGB_MAGENTA);
-                rgb_matrix_set_color(LL_A, RGB_MAGENTA);
-                rgb_matrix_set_color(LL_S, RGB_MAGENTA);
-                rgb_matrix_set_color(LL_D, RGB_MAGENTA);
-                break;
             case _mouse:
                 // Mouse speed
                 rgb_matrix_set_color(LL_1, RGB_DIM_YELLOW);
@@ -310,8 +294,6 @@ void rgb_matrix_indicators_user(void) {
                 rgb_matrix_set_color(LL_BSLASH, RGB_RED);
                 // NKRO toggle
                 rgb_matrix_set_toggle(LL_N, keymap_config.nkro);
-                // Gamer layer toggle
-                rgb_matrix_set_toggle(LL_G, layer_state_is(_gamer));
                 // Mouse layer toggle
                 rgb_matrix_set_toggle(LL_M, layer_state_is(_mouse));
                 // Recording enabled toggle
