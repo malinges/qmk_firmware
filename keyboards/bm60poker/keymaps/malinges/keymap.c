@@ -158,8 +158,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_mouse] = LAYOUT_60_ansi(
         XXXXXXX, KC_ACL0, KC_ACL1, KC_ACL2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
-        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_WH_U, KC_BTN1, KC_MS_U, KC_BTN2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,          _______,
+        _______, XXXXXXX, KC_WH_U, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN1, KC_MS_U, KC_BTN2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        _______, KC_WH_L, KC_WH_D, KC_WH_R, XXXXXXX, XXXXXXX, XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX,          _______,
         _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
         _______, _______, _______,                            XXXXXXX,                            _______, _______, _______, _______
     ),
@@ -251,9 +251,11 @@ void rgb_matrix_indicators_user(void) {
             rgb_matrix_set_color(LL_1, RGB_DIM_YELLOW);
             rgb_matrix_set_color(LL_2, RGB_DIM_YELLOW);
             rgb_matrix_set_color(LL_3, RGB_DIM_YELLOW);
-            // Scroll up and scroll down
-            rgb_matrix_set_color(LL_Y, RGB_DIM_MAGENTA);
-            rgb_matrix_set_color(LL_H, RGB_DIM_MAGENTA);
+            // Mouse wheel up, left, down and right
+            rgb_matrix_set_color(LL_W, RGB_DIM_MAGENTA);
+            rgb_matrix_set_color(LL_A, RGB_DIM_MAGENTA);
+            rgb_matrix_set_color(LL_S, RGB_DIM_MAGENTA);
+            rgb_matrix_set_color(LL_D, RGB_DIM_MAGENTA);
             // Left and right click
             rgb_matrix_set_color(LL_U, RGB_GREEN);
             rgb_matrix_set_color(LL_O, RGB_GREEN);
