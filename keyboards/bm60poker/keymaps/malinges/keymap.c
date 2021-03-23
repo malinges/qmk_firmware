@@ -25,12 +25,14 @@ enum layers {
     _spcfn,
     _mouse,
     _fn,
+    _debug,
 };
 
 enum keycodes {
     REC_TOG = SAFE_RANGE,
     REN_TOG,
     WPM_TOG,
+    MAC_LOC, // macOS lock screen (LCTL+LGUI+Q)
 };
 
 enum td_keycodes {
@@ -150,7 +152,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPFN,                            KC_RALT, REC_TOG, KC_RCTL, MO(_fn)
     ),
     [_spcfn] = LAYOUT_60_ansi(
-        KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
+        MAC_LOC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
         KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX,          _______,
         _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
@@ -194,6 +196,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case WPM_TOG:
             if (record->event.pressed) {
                 set_wpm_enabled(!user_config.wpm_enabled);
+            }
+            return false;
+        case MAC_LOC:
+            if (record->event.pressed) {
+                tap_code16(LCTL(LGUI(KC_Q)));
             }
             return false;
         default:
@@ -266,7 +273,7 @@ void rgb_matrix_indicators_user(void) {
             rgb_matrix_set_color(LL_L, RGB_BLUE);
             break;
         case _spcfn:
-            // Escape and Delete
+            // Macos lock screen and Delete
             rgb_matrix_set_color(LL_ESCAPE, RGB_RED);
             rgb_matrix_set_color(LL_BSPACE, RGB_RED);
             // Insert
