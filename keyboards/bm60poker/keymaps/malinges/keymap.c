@@ -33,6 +33,7 @@ enum keycodes {
     REN_TOG,
     WPM_TOG,
     MAC_LOC, // macOS lock screen (LCTL+LGUI+Q)
+    ESC_CL, // Escape on tap, Caps Lock on hold
 };
 
 enum td_keycodes {
@@ -48,6 +49,9 @@ enum input_messages {
     RECORDING_QUERY,
     RECORDING_ACK,
 };
+
+static uint16_t esc_cl_timer;
+static bool esc_cl_pressed = false;
 
 typedef union {
   uint32_t raw;
@@ -147,7 +151,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_qwerty] = LAYOUT_60_ansi(
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
-        KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
+        ESC_CL,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPFN,                            KC_RALT, REC_TOG, KC_RCTL, MO(_fn)
     ),
@@ -203,6 +207,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code16(LCTL(LGUI(KC_Q)));
             }
             return false;
+        case ESC_CL:
+            esc_cl_pressed = record->event.pressed;
+            if (record->event.pressed) {
+                esc_cl_timer = record->event.time;
+            } else if (timer_elapsed(esc_cl_timer) < TAPPING_TERM) {
+                tap_code(KC_ESC);
+            } else {
+                unregister_code(KC_CAPS);
+            }
         default:
             return true; // Process all other keycodes normally
     }
@@ -237,6 +250,11 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
 }
 
 void rgb_matrix_indicators_user(void) {
+    if (esc_cl_pressed && timer_elapsed(esc_cl_timer) >= TAPPING_TERM) {
+        esc_cl_pressed = false; // prevent multiple calls to register_code()
+        register_code(KC_CAPS);
+    }
+
     if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
         process_wpm(get_current_wpm(), false);
     }
