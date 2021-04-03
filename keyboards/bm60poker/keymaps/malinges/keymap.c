@@ -158,7 +158,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_spcfn] = LAYOUT_60_ansi(
         MAC_LOC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
         _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
-        KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX,          _______,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX,          _______,
         _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     ),
@@ -231,7 +231,6 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 #define RGB_DIM_YELLOW 0x7F, 0x7F, 0x00
 #define RGB_DIM_CYAN 0x00, 0x7F, 0x7F
 #define RGB_DIM_WHITE 0x7F, 0x7F, 0x7F
-#define RGB_DIMMER_WHITE 0x66, 0x66, 0x66
 
 static void rgb_matrix_set_toggle(int led_index, bool toggle_enabled) {
     if (toggle_enabled) {
@@ -296,8 +295,6 @@ void rgb_matrix_indicators_user(void) {
             rgb_matrix_set_color(LL_BSPACE, RGB_RED);
             // Insert
             rgb_matrix_set_color(LL_BSLASH, RGB_DIM_CYAN);
-            // Caps Lock
-            rgb_matrix_set_color(LL_CAPSLOCK, RGB_DIMMER_WHITE);
             // Page Up and Page Down
             rgb_matrix_set_color(LL_Y, RGB_DIM_MAGENTA);
             rgb_matrix_set_color(LL_H, RGB_DIM_MAGENTA);
