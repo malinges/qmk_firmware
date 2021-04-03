@@ -179,7 +179,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case REC_TOG:
             if (user_config.recording_enabled) {
                 if (record->event.pressed) {
-                    rec_tog_timer = timer_read();
+                    rec_tog_timer = record->event.time;
                     set_recording(!local_recording);
                 } else {
                     if (timer_elapsed(rec_tog_timer) > TAPPING_TERM) {
