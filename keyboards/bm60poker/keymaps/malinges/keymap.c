@@ -277,7 +277,7 @@ void rgb_matrix_indicators_user(void) {
 
     if (user_config.recording_enabled) {
         if (local_recording) {
-            rgb_matrix_set_color(58, RECORDING_RGB_COLOR);
+            rgb_matrix_set_color(LL_MENU, RECORDING_RGB_COLOR);
         }
         if (remote_recording) {
             rgb_matrix_layer_helper(RECORDING_RGB_COLOR, LED_FLAG_UNDERGLOW);
@@ -358,6 +358,6 @@ void rgb_matrix_indicators_user(void) {
 
     led_t led_state = host_keyboard_led_state();
     if (led_state.caps_lock) {
-        rgb_matrix_set_color(28, RGB_WHITE);
+        rgb_matrix_set_color(LL_CAPSLOCK, RGB_WHITE);
     }
 }
