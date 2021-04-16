@@ -178,8 +178,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
+#define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
+
+static uint16_t rgb_keycode;
+static keyrecord_t rgb_record;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case RGB_HUI...RGB_SPD:
+            rgb_keycode = keycode;
+            rgb_record = *record;
+            return true;
         case REC_TOG:
             if (user_config.recording_enabled) {
                 if (record->event.pressed) {
@@ -250,6 +259,11 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
 }
 
 void rgb_matrix_indicators_user(void) {
+    if (rgb_record.event.pressed && timer_elapsed(rgb_record.event.time) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
+        rgb_record.event.time += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
+        process_rgb(rgb_keycode, &rgb_record);
+    }
+
     if (esc_cl_pressed && timer_elapsed(esc_cl_timer) >= TAPPING_TERM) {
         esc_cl_pressed = false; // prevent multiple calls to register_code()
         register_code(KC_CAPS);
