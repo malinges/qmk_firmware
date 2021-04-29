@@ -261,7 +261,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #endif
 };
 
+#ifndef REC_TOG_TERM
+#define REC_TOG_TERM TAPPING_TERM
+#endif
+
+#ifndef ESC_CL_TERM
+#define ESC_CL_TERM TAPPING_TERM
+#endif
+
+#ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
 #define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
+#endif
 
 static uint16_t rgb_keycode;
 static keyrecord_t rgb_record;
@@ -278,7 +288,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     rec_tog_timer = record->event.time;
                     set_recording(!local_recording);
                 } else {
-                    if (timer_elapsed(rec_tog_timer) > TAPPING_TERM) {
+                    if (timer_elapsed(rec_tog_timer) > REC_TOG_TERM) {
                         set_recording(!local_recording);
                     }
                 }
@@ -303,7 +313,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             esc_cl_pressed = record->event.pressed;
             if (record->event.pressed) {
                 esc_cl_timer = record->event.time;
-            } else if (timer_elapsed(esc_cl_timer) < TAPPING_TERM) {
+            } else if (timer_elapsed(esc_cl_timer) < ESC_CL_TERM) {
                 tap_code(KC_ESC);
             } else {
                 unregister_code(KC_CAPS);
@@ -379,7 +389,7 @@ void rgb_matrix_indicators_user(void) {
         process_rgb(rgb_keycode, &rgb_record);
     }
 
-    if (esc_cl_pressed && timer_elapsed(esc_cl_timer) >= TAPPING_TERM) {
+    if (esc_cl_pressed && timer_elapsed(esc_cl_timer) >= ESC_CL_TERM) {
         esc_cl_pressed = false; // prevent multiple calls to register_code()
         register_code(KC_CAPS);
     }
