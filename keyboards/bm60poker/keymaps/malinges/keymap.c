@@ -231,8 +231,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_spcfn] = LAYOUT_60_ansi(
         MAC_LOC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
-        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
-        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX, XXXXXXX,          _______,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT, KC_END,  XXXXXXX,          _______,
         _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
     ),
@@ -426,11 +426,11 @@ void rgb_matrix_indicators_user(void) {
             // Insert
             rgb_matrix_set_color(LL_BSLASH, RGB_DIM_CYAN);
             // Page Up and Page Down
-            rgb_matrix_set_color(LL_Y, RGB_DIM_MAGENTA);
-            rgb_matrix_set_color(LL_H, RGB_DIM_MAGENTA);
+            rgb_matrix_set_color(LL_U, RGB_DIM_MAGENTA);
+            rgb_matrix_set_color(LL_O, RGB_DIM_MAGENTA);
             // Home and End
-            rgb_matrix_set_color(LL_U, RGB_GREEN);
-            rgb_matrix_set_color(LL_O, RGB_GREEN);
+            rgb_matrix_set_color(LL_H, RGB_GREEN);
+            rgb_matrix_set_color(LL_SCOLON, RGB_GREEN);
             // Arrows
             rgb_matrix_set_color(LL_I, RGB_BLUE);
             rgb_matrix_set_color(LL_J, RGB_BLUE);
