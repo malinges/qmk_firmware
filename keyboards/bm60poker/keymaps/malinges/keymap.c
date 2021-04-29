@@ -17,6 +17,9 @@
 #include <string.h>
 #include "raw_hid.h"
 #include "usb_descriptor.h"
+#ifdef DEBUG_LAYER
+#include "eeconfig.h"
+#endif
 #include "led_layout.h"
 #include QMK_KEYBOARD_H
 
@@ -25,7 +28,9 @@ enum layers {
     _spcfn,
     _mouse,
     _fn,
+#ifdef DEBUG_LAYER
     _debug,
+#endif
 };
 
 enum keycodes {
@@ -34,6 +39,14 @@ enum keycodes {
     WPM_TOG,
     MAC_LOC, // macOS lock screen (LCTL+LGUI+Q)
     ESC_CL, // Escape on tap, Caps Lock on hold
+#ifdef DEBUG_LAYER
+    DB_TOGG,
+    DB_MTRX,
+    DB_KBRD,
+    DB_MOUS,
+    PRT_VER,
+    CLR_EEP,
+#endif
 };
 
 enum td_keycodes {
@@ -92,10 +105,6 @@ static void set_recording_enabled(bool recording_enabled) {
 }
 
 void keyboard_post_init_user(void) {
-    debug_enable = true;
-    // debug_matrix = true;
-    // debug_keyboard = true;
-    // debug_mouse = true;
     user_config.raw = eeconfig_read_user();
     set_recording(!user_config.recording_enabled);
 }
@@ -139,6 +148,71 @@ static void set_wpm_enabled(bool wpm_enabled) {
     eeconfig_update_user(user_config.raw);
 }
 
+#ifdef DEBUG_LAYER
+
+static void print_version(void) {
+    // print version & information
+    print("\t- Version -\n");
+    print("VID: " STR(VENDOR_ID) "(" STR(MANUFACTURER) ") "
+                                                       "PID: " STR(PRODUCT_ID) "(" STR(PRODUCT) ") "
+                                                                                                "VER: " STR(DEVICE_VER) "\n");
+    print("BUILD:  (" __DATE__ ")\n");
+#ifndef SKIP_VERSION
+#    ifdef PROTOCOL_CHIBIOS
+    print("CHIBIOS: " STR(CHIBIOS_VERSION) ", CONTRIB: " STR(CHIBIOS_CONTRIB_VERSION) "\n");
+#    endif
+#endif
+
+    /* build options */
+    print("OPTIONS:"
+
+#ifdef PROTOCOL_LUFA
+          " LUFA"
+#endif
+#ifdef PROTOCOL_VUSB
+          " VUSB"
+#endif
+#ifdef BOOTMAGIC_ENABLE
+          " BOOTMAGIC"
+#endif
+#ifdef MOUSEKEY_ENABLE
+          " MOUSEKEY"
+#endif
+#ifdef EXTRAKEY_ENABLE
+          " EXTRAKEY"
+#endif
+#ifdef CONSOLE_ENABLE
+          " CONSOLE"
+#endif
+#ifdef COMMAND_ENABLE
+          " COMMAND"
+#endif
+#ifdef NKRO_ENABLE
+          " NKRO"
+#endif
+#ifdef LTO_ENABLE
+          " LTO"
+#endif
+
+          " " STR(BOOTLOADER_SIZE) "\n");
+
+    print("GCC: " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
+#if defined(__AVR__)
+              " AVR-LIBC: " __AVR_LIBC_VERSION_STRING__ " AVR_ARCH: avr" STR(__AVR_ARCH__)
+#endif
+                  "\n");
+
+    return;
+}
+
+#define MO_DEBUG MO(_debug)
+
+#else
+
+#define MO_DEBUG XXXXXXX
+
+#endif
+
 #define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
 #define T_MOUSE TG(_mouse)
 #define NXT_PRV TD(TD_M_NXT_PRV)
@@ -170,12 +244,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            XXXXXXX,                            _______, _______, _______, _______
     ),
     [_fn] = LAYOUT_60_ansi(
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO_DEBUG,
         XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,KC_BRID, KC_BRIU, RESET,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     ),
+#ifdef DEBUG_LAYER
+    [_debug] = LAYOUT_60_ansi(
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
+        XXXXXXX, XXXXXXX, XXXXXXX, CLR_EEP, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, DB_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, DB_KBRD, XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX,
+        XXXXXXX,          XXXXXXX, DB_MTRX, XXXXXXX, PRT_VER, XXXXXXX, XXXXXXX, DB_MOUS, XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, _______
+    ),
+#endif
 };
 
 #define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
@@ -226,6 +309,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_CAPS);
             }
             return false;
+#ifdef DEBUG_LAYER
+        case DB_TOGG:
+            if (record->event.pressed) {
+                debug_enable = !debug_enable;
+            }
+            return false;
+        case DB_MTRX:
+            if (record->event.pressed) {
+                debug_matrix = !debug_matrix;
+            }
+            return false;
+        case DB_KBRD:
+            if (record->event.pressed) {
+                debug_keyboard = !debug_keyboard;
+            }
+            return false;
+        case DB_MOUS:
+            if (record->event.pressed) {
+                debug_mouse = !debug_mouse;
+            }
+            return false;
+        case PRT_VER:
+            if (record->event.pressed) {
+                print_version();
+            }
+            return false;
+        case CLR_EEP:
+            if (record->event.pressed) {
+                eeconfig_init();
+            }
+            return false;
+#endif
         default:
             return true; // Process all other keycodes normally
     }
@@ -354,6 +469,22 @@ void rgb_matrix_indicators_user(void) {
             // _fn layer key
             rgb_matrix_set_color(LL_FN, RGB_DIM_WHITE);
             break;
+#ifdef DEBUG_LAYER
+        case _debug:
+            // DB_TOGG
+            rgb_matrix_set_toggle(LL_D, debug_enable);
+            // DB_MTRX
+            rgb_matrix_set_toggle(LL_X, debug_matrix);
+            // DB_KBRD
+            rgb_matrix_set_toggle(LL_K, debug_keyboard);
+            // DB_MOUS
+            rgb_matrix_set_toggle(LL_M, debug_mouse);
+            // PRT_VER
+            rgb_matrix_set_color(LL_V, RGB_BLUE);
+            // CLR_EEP
+            rgb_matrix_set_color(LL_E, RGB_RED);
+            break;
+#endif
     }
 
     led_t led_state = host_keyboard_led_state();
