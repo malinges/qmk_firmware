@@ -63,8 +63,8 @@ enum input_messages {
     RECORDING_ACK,
 };
 
-static uint16_t esc_cl_timer;
 static bool esc_cl_pressed = false;
+static uint16_t esc_cl_timer;
 
 typedef union {
   uint32_t raw;
@@ -275,17 +275,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 static uint16_t rgb_keycode;
 static keyrecord_t rgb_record;
+static uint16_t rgb_timer;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case RGB_HUI...RGB_SPD:
             rgb_keycode = keycode;
             rgb_record = *record;
+            rgb_timer = timer_read();
             return true;
         case REC_TOG:
             if (user_config.recording_enabled) {
                 if (record->event.pressed) {
-                    rec_tog_timer = record->event.time;
+                    rec_tog_timer = timer_read();
                     set_recording(!local_recording);
                 } else {
                     if (timer_elapsed(rec_tog_timer) > REC_TOG_TERM) {
@@ -312,7 +314,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ESC_CL:
             esc_cl_pressed = record->event.pressed;
             if (record->event.pressed) {
-                esc_cl_timer = record->event.time;
+                esc_cl_timer = timer_read();
             } else if (timer_elapsed(esc_cl_timer) < ESC_CL_TERM) {
                 tap_code(KC_ESC);
             } else {
@@ -384,8 +386,8 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
 }
 
 void rgb_matrix_indicators_user(void) {
-    if (rgb_record.event.pressed && timer_elapsed(rgb_record.event.time) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
-        rgb_record.event.time += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
+    if (rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
+        rgb_timer += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
         process_rgb(rgb_keycode, &rgb_record);
     }
 
