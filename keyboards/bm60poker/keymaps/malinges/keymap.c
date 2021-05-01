@@ -105,6 +105,7 @@ static void set_recording_enabled(bool recording_enabled) {
 }
 
 void keyboard_post_init_user(void) {
+    debug_enable = false;
     user_config.raw = eeconfig_read_user();
     set_recording(!user_config.recording_enabled);
 }
