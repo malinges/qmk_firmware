@@ -485,8 +485,10 @@ void rgb_matrix_indicators_user(void) {
             rgb_matrix_set_color(LL_RBRACKET, RGB_DIM_YELLOW);
             // RESET key
             rgb_matrix_set_color(LL_BSLASH, RGB_RED);
+#ifdef NKRO_ENABLE
             // NKRO toggle
             rgb_matrix_set_toggle(LL_N, keymap_config.nkro);
+#endif
             // Mouse layer toggle
             rgb_matrix_set_toggle(LL_M, layer_state_is(_mouse));
             // Recording enabled toggle
