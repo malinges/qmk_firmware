@@ -280,7 +280,7 @@ bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
             return false;
         default:
             // DO ignore mod-tap when interrupted for home row mods
-            // (i.e. interpret: RGUI_J↓ RSFT_K↓ RGUI_J↓ RSFT_K↑ as: KC_J KC_K)
+            // (i.e. interpret: RGUI_J↓ RSFT_K↓ RGUI_J↑ RSFT_K↑ as: KC_J KC_K)
             return true;
     }
 }
