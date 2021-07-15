@@ -424,7 +424,7 @@ void rgb_matrix_indicators_user(void) {
         process_wpm(get_current_wpm(), false);
     }
 
-    if (g_suspend_state || !rgb_matrix_config.enable) return;
+    if (rgb_matrix_get_suspend_state() || !rgb_matrix_config.enable) return;
 
     if (user_config.recording_enabled) {
         if (local_recording) {
