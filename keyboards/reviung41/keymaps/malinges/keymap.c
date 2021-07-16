@@ -73,21 +73,21 @@ void oled_task_user(void) {
 
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("Default\n"), false);
+            oled_write_ln_P(PSTR("Base"), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("LOWER\n"), false);
+            oled_write_ln_P(PSTR("LOWER"), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("RAISE\n"), false);
+            oled_write_ln_P(PSTR("RAISE"), false);
             break;
             break;
         case _ADJUST:
-            oled_write_P(PSTR("ADJUST\n"), false);
+            oled_write_ln_P(PSTR("ADJUST"), false);
             break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
-            oled_write_ln_P(PSTR("Undefined"), false);
+            oled_write_ln_P(PSTR("Unknown?!"), false);
     }
 
     // Host Keyboard LED Status
