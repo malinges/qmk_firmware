@@ -136,8 +136,25 @@ void keyboard_post_init_user(void) {
 #endif
 }
 
+#ifdef RGBLIGHT_ENABLE
+#  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
+#    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
+#  endif
+
+static uint16_t rgb_keycode;
+static keyrecord_t rgb_record;
+static uint16_t rgb_timer;
+#endif
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
+#ifdef RGBLIGHT_ENABLE
+    case RGB_HUI...RGB_SPD:
+      rgb_keycode = keycode;
+      rgb_record = *record;
+      rgb_timer = timer_read();
+      return true;
+#endif
     case OLED_TOG:
 #ifdef OLED_DRIVER_ENABLE
       if (record->event.pressed) {
@@ -148,4 +165,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     default:
       return true; // Process all other keycodes normally
   }
+}
+
+void housekeeping_task_user(void) {
+#ifdef RGBLIGHT_ENABLE
+  if (rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
+    rgb_timer += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
+    process_rgb(rgb_keycode, &rgb_record);
+  }
+#endif
 }
