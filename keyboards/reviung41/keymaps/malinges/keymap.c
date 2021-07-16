@@ -33,7 +33,7 @@ typedef union {
   };
 } user_config_t;
 
-user_config_t user_config;
+static user_config_t user_config;
 
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
