@@ -22,6 +22,19 @@ enum layer_names {
   _ADJUST
 };
 
+enum custom_keycodes {
+  OLED_TOG = SAFE_RANGE,  // Toggle OLED on/off
+};
+
+typedef union {
+  uint32_t raw;
+  struct {
+    bool     oled_enable:1;
+  };
+} user_config_t;
+
+user_config_t user_config;
+
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
 #define ADJUST MO(_ADJUST)
@@ -51,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_ADJUST] = LAYOUT_reviung41(
-    RGB_VAI,   RGB_SAI, RGB_HUI,  RGB_MOD,  XXXXXXX,   RGB_TOG,            XXXXXXX,  KC_VOLD,  KC_MUTE,  KC_VOLU,  KC_BRID,  KC_BRIU,
+    RGB_VAI,   RGB_SAI, RGB_HUI,  RGB_MOD,  XXXXXXX,   RGB_TOG,            OLED_TOG, KC_VOLD,  KC_MUTE,  KC_VOLU,  KC_BRID,  KC_BRIU,
     RGB_VAD,   RGB_SAD, RGB_HUD,  RGB_RMOD, XXXXXXX,   XXXXXXX,            XXXXXXX,  KC_MPRV,  KC_MPLY,  KC_MNXT,  XXXXXXX,  XXXXXXX,
     XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,   XXXXXXX,            RESET,    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
                                             _______,   _______,  XXXXXXX,  _______,  _______
@@ -63,17 +76,36 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 #ifdef OLED_DRIVER_ENABLE
+static bool is_oled_enabled(void) {
+  return user_config.oled_enable;
+}
+
+static void oled_enable(bool enable) {
+  user_config.oled_enable = enable;
+  eeconfig_update_user(user_config.raw);
+  if (!enable) {
+    oled_clear();
+  }
+}
+
+static void oled_toggle(void) {
+  oled_enable(!is_oled_enabled());
+}
+
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return OLED_ROTATION_180;
 }
 
 void oled_task_user(void) {
-  // Host Keyboard Layer Status
+  if (!is_oled_enabled()) {
+    return;
+  }
+
   oled_write_P(PSTR("Layer: "), false);
 
   switch (get_highest_layer(layer_state)) {
     case _BASE:
-      oled_write_ln_P(PSTR("Base"), false);
+      oled_write_ln_P(PSTR("base"), false);
       break;
     case _LOWER:
       oled_write_ln_P(PSTR("LOWER"), false);
@@ -96,3 +128,24 @@ void oled_task_user(void) {
   oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
 }
 #endif
+
+void keyboard_post_init_user(void) {
+  user_config.raw = eeconfig_read_user();
+#ifdef OLED_DRIVER_ENABLE
+  oled_enable(user_config.oled_enable);
+#endif
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case OLED_TOG:
+#ifdef OLED_DRIVER_ENABLE
+      if (record->event.pressed) {
+        oled_toggle();
+      }
+#endif
+      return false;
+    default:
+      return true; // Process all other keycodes normally
+  }
+}
