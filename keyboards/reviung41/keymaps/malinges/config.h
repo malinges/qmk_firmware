@@ -1,4 +1,8 @@
-#if defined(RGB_DI_PIN) && defined(RGBLED_NUM)
-  #undef RGBLED_NUM
-  #define RGBLED_NUM 10
-#endif
+// Disable top LED
+#undef RGBLED_NUM
+#define RGBLED_NUM 10
+
+// Restore sane defaults
+#undef RGBLIGHT_HUE_STEP
+#undef RGBLIGHT_SAT_STEP
+#undef RGBLIGHT_VAL_STEP
