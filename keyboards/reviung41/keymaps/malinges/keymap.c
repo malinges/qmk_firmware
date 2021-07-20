@@ -27,6 +27,7 @@ enum custom_keycodes {
   OLED_TOG = SAFE_RANGE,  // Toggle OLED on/off
 };
 
+#ifdef OLED_DRIVER_ENABLE
 typedef union {
   uint32_t raw;
   struct {
@@ -35,6 +36,7 @@ typedef union {
 } user_config_t;
 
 static user_config_t user_config;
+#endif
 
 #ifdef RGBLIGHT_ENABLE
 #  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
@@ -113,6 +115,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return OLED_ROTATION_180;
 }
 
+#  ifdef RGBLIGHT_ENABLE
 static void oled_write_uint16(uint16_t i, uint8_t min_width) {
   char buf[6];
   {
@@ -137,6 +140,7 @@ static bool oled_write_rgb_mode_name(uint8_t mode_base, const char *data, bool m
 
   return true;
 }
+#  endif
 
 void oled_task_user(void) {
   if (!is_oled_enabled()) {
