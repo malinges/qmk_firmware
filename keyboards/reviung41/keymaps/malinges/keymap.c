@@ -40,8 +40,6 @@ static user_config_t user_config;
 #  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
 #    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
 #  endif
-extern rgblight_config_t rgblight_config;
-
 static uint16_t rgb_keycode;
 static keyrecord_t rgb_record;
 static uint16_t rgb_timer;
@@ -49,6 +47,7 @@ static uint16_t rgb_timer;
 #    ifndef RGB_KEYCODE_OLED_DISPLAY_TIME
 #     define RGB_KEYCODE_OLED_DISPLAY_TIME 2000
 #    endif
+extern rgblight_config_t rgblight_config;
 static bool oled_show_rgb_kc = false;
 #  endif
 #endif
