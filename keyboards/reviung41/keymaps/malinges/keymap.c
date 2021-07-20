@@ -228,14 +228,12 @@ void oled_task_user(void) {
   oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
   oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
 }
-#endif
 
 void keyboard_post_init_user(void) {
   user_config.raw = eeconfig_read_user();
-#ifdef OLED_DRIVER_ENABLE
   oled_enable(user_config.oled_enable);
-#endif
 }
+#endif
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
