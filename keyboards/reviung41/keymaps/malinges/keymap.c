@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include <stdio.h>
 
 enum layer_names {
   _BASE,
@@ -34,6 +35,23 @@ typedef union {
 } user_config_t;
 
 static user_config_t user_config;
+
+#ifdef RGBLIGHT_ENABLE
+#  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
+#    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
+#  endif
+extern rgblight_config_t rgblight_config;
+
+static uint16_t rgb_keycode;
+static keyrecord_t rgb_record;
+static uint16_t rgb_timer;
+#  ifdef OLED_DRIVER_ENABLE
+#    ifndef RGB_KEYCODE_OLED_DISPLAY_TIME
+#     define RGB_KEYCODE_OLED_DISPLAY_TIME 2000
+#    endif
+static bool oled_show_rgb_kc = false;
+#  endif
+#endif
 
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
@@ -96,30 +114,114 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return OLED_ROTATION_180;
 }
 
+static void oled_write_uint16(uint16_t i, uint8_t min_width) {
+  char buf[6];
+  {
+    char format[6];
+    sprintf(format, "%%%dd", min_width);
+    sprintf(buf, format, i);
+  }
+  oled_write(buf, false);
+}
+
+static bool oled_write_rgb_mode_name(uint8_t mode_base, const char *data, bool multiple) {
+  if (rgblight_config.mode < mode_base) {
+    return false;
+  }
+
+  oled_write_P(data, false);
+  if (multiple) {
+    oled_write_char(' ', false);
+    oled_write_uint16(rgblight_config.mode - mode_base + 1, 1);
+  }
+  oled_write_ln("", false);
+
+  return true;
+}
+
 void oled_task_user(void) {
   if (!is_oled_enabled()) {
     return;
   }
 
-  oled_write_P(PSTR("Layer: "), false);
+#  ifdef RGBLIGHT_ENABLE
+  bool oled_write_2_ln = true;
 
-  switch (get_highest_layer(layer_state)) {
-    case _BASE:
-      oled_write_ln_P(PSTR("base"), false);
-      break;
-    case _LOWER:
-      oled_write_ln_P(PSTR("LOWER"), false);
-      break;
-    case _RAISE:
-      oled_write_ln_P(PSTR("RAISE"), false);
-      break;
-    case _ADJUST:
-      oled_write_ln_P(PSTR("ADJUST"), false);
-      break;
-    default:
-      // Or use the write_ln shortcut over adding '\n' to the end of your string
-      oled_write_ln_P(PSTR("Unknown?!"), false);
+  if (oled_show_rgb_kc) {
+    if (rgb_record.event.pressed || timer_elapsed(rgb_timer) < RGB_KEYCODE_OLED_DISPLAY_TIME) {
+      switch (rgb_keycode) {
+        case RGB_TOG:
+          oled_write_P(PSTR("RGB: "), false);
+          oled_write_P(rgblight_config.enable ? PSTR("on") : PSTR("off"), false);
+          break;
+        case RGB_MODE_FORWARD...RGB_MODE_REVERSE:
+          oled_write_ln_P(PSTR("RGB mode:"), false);
+          if (!(
+#    ifdef RGBLIGHT_EFFECT_TWINKLE
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_TWINKLE, PSTR("Twinkle"), true) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_ALTERNATING
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_ALTERNATING, PSTR("Alternating"), false) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_RGB_TEST
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_RGB_TEST, PSTR("RGB test"), false) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_STATIC_GRADIENT
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_STATIC_GRADIENT, PSTR("Static gradient"), true) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_CHRISTMAS
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_CHRISTMAS, PSTR("Christmas"), false) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_KNIGHT
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_KNIGHT, PSTR("Knight"), true) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_SNAKE
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_SNAKE, PSTR("Snake"), true) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_RAINBOW_SWIRL
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_RAINBOW_SWIRL, PSTR("Rainbow swirl"), true) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_RAINBOW_MOOD
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_RAINBOW_MOOD, PSTR("Rainbow mood"), true) ||
+#    endif
+#    ifdef RGBLIGHT_EFFECT_BREATHING
+            oled_write_rgb_mode_name(RGBLIGHT_MODE_BREATHING, PSTR("Breathing"), true) ||
+#    endif
+            false)) {
+            oled_write_ln_P(PSTR("Static light"), false);
+          }
+          oled_write_2_ln = false;
+          break;
+        case RGB_HUI...RGB_HUD:
+          oled_write_P(PSTR("RGB hue: "), false);
+          oled_write_uint16(((uint32_t)360) * rgblight_config.hue / 256, 3);
+          oled_write(" deg", false);
+          break;
+        case RGB_SAI...RGB_SAD:
+          oled_write_P(PSTR("RGB saturation: "), false);
+          oled_write_uint16(((uint16_t)100) * rgblight_config.sat / 255, 3);
+          oled_write_char('%', false);
+          break;
+        case RGB_VAI...RGB_VAD:
+          oled_write_P(PSTR("RGB brightness: "), false);
+          oled_write_uint16(((uint16_t)100) * rgblight_config.val / RGBLIGHT_LIMIT_VAL, 3);
+          oled_write_char('%', false);
+          break;
+        case RGB_SPI...RGB_SPD:
+          oled_write_P(PSTR("RGB speed: "), false);
+          oled_write_uint16(rgblight_config.speed, 1);
+          break;
+      }
+    } else {
+      oled_show_rgb_kc = false;
+    }
   }
+
+  if (oled_write_2_ln) {
+    oled_write_ln("", false);
+    oled_write_ln("", false);
+  }
+#  endif
 
   // Host Keyboard LED Status
   led_t led_state = host_keyboard_led_state();
@@ -136,23 +238,16 @@ void keyboard_post_init_user(void) {
 #endif
 }
 
-#ifdef RGBLIGHT_ENABLE
-#  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
-#    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
-#  endif
-
-static uint16_t rgb_keycode;
-static keyrecord_t rgb_record;
-static uint16_t rgb_timer;
-#endif
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
 #ifdef RGBLIGHT_ENABLE
-    case RGB_HUI...RGB_SPD:
+    case RGB_TOG...RGB_MODE_RGBTEST:
       rgb_keycode = keycode;
       rgb_record = *record;
       rgb_timer = timer_read();
+#  ifdef OLED_DRIVER_ENABLE
+      oled_show_rgb_kc = true;
+#  endif
       return true;
 #endif
     case OLED_TOG:
@@ -169,7 +264,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 void housekeeping_task_user(void) {
 #ifdef RGBLIGHT_ENABLE
-  if (rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
+  if (rgb_keycode >= RGB_HUI && rgb_keycode <= RGB_SPD && rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
     rgb_timer += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
     process_rgb(rgb_keycode, &rgb_record);
   }
