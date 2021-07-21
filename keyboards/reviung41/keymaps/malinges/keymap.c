@@ -27,17 +27,6 @@ enum custom_keycodes {
   OLED_TOG = SAFE_RANGE,  // Toggle OLED on/off
 };
 
-#ifdef OLED_DRIVER_ENABLE
-typedef union {
-  uint32_t raw;
-  struct {
-    bool     oled_enable:1;
-  };
-} user_config_t;
-
-static user_config_t user_config;
-#endif
-
 #ifdef RGBLIGHT_ENABLE
 #  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
 #    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
@@ -95,6 +84,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 #ifdef OLED_DRIVER_ENABLE
+typedef union {
+  uint32_t raw;
+  struct {
+    bool     oled_enable:1;
+  };
+} user_config_t;
+
+static user_config_t user_config;
+
 static bool is_oled_enabled(void) {
   return user_config.oled_enable;
 }
