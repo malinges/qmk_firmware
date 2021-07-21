@@ -210,10 +210,11 @@ void oled_task_user(void) {
           oled_write_uint16(((uint16_t)100) * rgblight_config.val / RGBLIGHT_LIMIT_VAL, 3);
           oled_write_char('%', false);
           break;
-        case RGB_SPI...RGB_SPD:
-          oled_write_P(PSTR("RGB speed: "), false);
-          oled_write_uint16(rgblight_config.speed, 1);
-          break;
+        // RGB Lighting subsystem doesn't really use these keycodes, uncomment when using RGB Matrix
+        // case RGB_SPI...RGB_SPD:
+        //   oled_write_P(PSTR("RGB speed: "), false);
+        //   oled_write_uint16(rgblight_config.speed, 1);
+        //   break;
       }
     } else {
       oled_show_rgb_kc = false;
