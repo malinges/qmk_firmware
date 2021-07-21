@@ -16,6 +16,13 @@
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 
+#ifndef MIN
+#  define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef MAX
+#  define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+
 enum layer_names {
   _BASE,
   _LOWER,
@@ -122,14 +129,10 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 #  ifdef RGBLIGHT_ENABLE
 
 static void oled_write_uint16(uint16_t i, uint8_t min_width) {
-  if (min_width > 5) {
-    return; // We don't want buffer overflows, do we?
-  }
-
   char buf[6];
   {
     char format[6];
-    sprintf(format, "%%%uu", min_width);
+    sprintf(format, "%%%uu", MIN(min_width, 5));
     sprintf(buf, format, i);
   }
   oled_write(buf, false);
