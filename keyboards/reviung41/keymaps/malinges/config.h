@@ -8,3 +8,4 @@
 #undef RGBLIGHT_VAL_STEP
 
 #define OLED_UPDATE_INTERVAL 10
+// #define OLED_SHOW_FPS

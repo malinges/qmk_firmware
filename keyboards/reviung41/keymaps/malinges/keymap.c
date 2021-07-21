@@ -244,6 +244,25 @@ void oled_task_user(void) {
   oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
   oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
   oled_write_P(led_state.scroll_lock ? PSTR("SCR") : PSTR("   "), false);
+
+#  ifdef OLED_SHOW_FPS
+  static uint16_t fps = 0;
+  static uint16_t counter = 0;
+  static uint16_t start = 0;
+
+  uint16_t now = timer_read();
+
+  if (now - start >= 1000) {
+    fps = ((uint32_t)counter) * (now - start) / 1000;
+    counter = 1;
+    start = now;
+  } else {
+    counter++;
+  }
+
+  oled_set_cursor(oled_max_chars() - 3, 0);
+  oled_write_uint16(fps, 3);
+#  endif
 }
 
 #endif // OLED_DRIVER_ENABLE
