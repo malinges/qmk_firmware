@@ -27,22 +27,6 @@ enum custom_keycodes {
   OLED_TOG = SAFE_RANGE,  // Toggle OLED on/off
 };
 
-#ifdef RGBLIGHT_ENABLE
-#  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
-#    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
-#  endif
-static uint16_t rgb_keycode;
-static keyrecord_t rgb_record;
-static uint16_t rgb_timer;
-#  ifdef OLED_DRIVER_ENABLE
-#    ifndef RGB_KEYCODE_OLED_DISPLAY_TIME
-#     define RGB_KEYCODE_OLED_DISPLAY_TIME 2000
-#    endif
-extern rgblight_config_t rgblight_config;
-static bool oled_show_rgb_kc = false;
-#  endif
-#endif
-
 #define LOWER  MO(_LOWER)
 #define RAISE  MO(_RAISE)
 #define ADJUST MO(_ADJUST)
@@ -83,7 +67,24 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 
+#ifdef RGBLIGHT_ENABLE
+#  ifndef RGB_TUNING_KEYCODE_REPEAT_INTERVAL
+#    define RGB_TUNING_KEYCODE_REPEAT_INTERVAL TAPPING_TERM
+#  endif
+static uint16_t rgb_keycode;
+static keyrecord_t rgb_record;
+static uint16_t rgb_timer;
+#  ifdef OLED_DRIVER_ENABLE
+#    ifndef RGB_KEYCODE_OLED_DISPLAY_TIME
+#     define RGB_KEYCODE_OLED_DISPLAY_TIME 2000
+#    endif
+extern rgblight_config_t rgblight_config;
+static bool oled_show_rgb_kc = false;
+#  endif
+#endif
+
 #ifdef OLED_DRIVER_ENABLE
+
 typedef union {
   uint32_t raw;
   struct {
@@ -109,16 +110,26 @@ static void oled_toggle(void) {
   oled_enable(!is_oled_enabled());
 }
 
+void keyboard_post_init_user(void) {
+  user_config.raw = eeconfig_read_user();
+  oled_enable(user_config.oled_enable);
+}
+
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
   return OLED_ROTATION_180;
 }
 
 #  ifdef RGBLIGHT_ENABLE
+
 static void oled_write_uint16(uint16_t i, uint8_t min_width) {
+  if (min_width > 5) {
+    return; // We don't want buffer overflows, do we?
+  }
+
   char buf[6];
   {
     char format[6];
-    sprintf(format, "%%%dd", min_width);
+    sprintf(format, "%%%uu", min_width);
     sprintf(buf, format, i);
   }
   oled_write(buf, false);
@@ -138,7 +149,8 @@ static bool oled_write_rgb_mode_name(uint8_t mode_base, const char *data, bool m
 
   return true;
 }
-#  endif
+
+#  endif // RGBLIGHT_ENABLE
 
 void oled_task_user(void) {
   if (!is_oled_enabled()) {
@@ -146,6 +158,7 @@ void oled_task_user(void) {
   }
 
 #  ifdef RGBLIGHT_ENABLE
+
   bool oled_write_2_ln = true;
 
   if (oled_show_rgb_kc) {
@@ -223,7 +236,8 @@ void oled_task_user(void) {
     oled_write_ln("", false);
     oled_write_ln("", false);
   }
-#  endif
+
+#  endif // RGBLIGHT_ENABLE
 
   // Host Keyboard LED Status
   led_t led_state = host_keyboard_led_state();
@@ -232,11 +246,7 @@ void oled_task_user(void) {
   oled_write_P(led_state.scroll_lock ? PSTR("SCR") : PSTR("   "), false);
 }
 
-void keyboard_post_init_user(void) {
-  user_config.raw = eeconfig_read_user();
-  oled_enable(user_config.oled_enable);
-}
-#endif
+#endif // OLED_DRIVER_ENABLE
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
