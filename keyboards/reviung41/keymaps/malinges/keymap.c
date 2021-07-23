@@ -236,17 +236,17 @@ void oled_task_user(void) {
           break;
         case RGB_HUI...RGB_HUD:
           oled_write_P(PSTR("RGB hue: "), false);
-          oled_write_uint16(((uint32_t)360) * rgblight_config.hue / 256, 3);
+          oled_write_uint16((uint32_t) 360 * rgblight_config.hue / 256, 3);
           oled_write(" deg", false);
           break;
         case RGB_SAI...RGB_SAD:
           oled_write_P(PSTR("RGB saturation: "), false);
-          oled_write_uint16(((uint16_t)100) * rgblight_config.sat / 255, 3);
+          oled_write_uint16(100 * rgblight_config.sat / 255, 3);
           oled_write_char('%', false);
           break;
         case RGB_VAI...RGB_VAD:
           oled_write_P(PSTR("RGB brightness: "), false);
-          oled_write_uint16(((uint16_t)100) * rgblight_config.val / RGBLIGHT_LIMIT_VAL, 3);
+          oled_write_uint16(100 * rgblight_config.val / RGBLIGHT_LIMIT_VAL, 3);
           oled_write_char('%', false);
           break;
         // RGB Lighting subsystem doesn't really use these keycodes, uncomment when using RGB Matrix
