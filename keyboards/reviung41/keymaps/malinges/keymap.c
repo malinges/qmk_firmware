@@ -281,7 +281,7 @@ void oled_task_user(void) {
   uint16_t now = timer_read();
 
   if (now - start >= 1000) {
-    fps = ((uint32_t)counter) * (now - start) / 1000;
+    fps = ((uint32_t)counter) * 1000 / (now - start);
     counter = 1;
     start = now;
   } else {
