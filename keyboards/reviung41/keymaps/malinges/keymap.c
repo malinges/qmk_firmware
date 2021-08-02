@@ -176,6 +176,8 @@ void oled_task_user(void) {
     return;
   }
 
+  oled_clear();
+
   if (startup_logo_show) {
     if (timer_elapsed(startup_logo_start) < OLED_STARTUP_LOGO_DURATION) {
       oled_write_P(qmk_logo, false);
@@ -187,7 +189,6 @@ void oled_task_user(void) {
 
 #  ifdef RGBLIGHT_ENABLE
 
-  bool oled_write_2_ln = true;
 
   if (oled_show_rgb_kc) {
     if (rgb_record.event.pressed || timer_elapsed(rgb_timer) < RGB_KEYCODE_OLED_DISPLAY_TIME) {
@@ -232,7 +233,6 @@ void oled_task_user(void) {
             false)) {
             oled_write_ln_P(PSTR("Static light"), false);
           }
-          oled_write_2_ln = false;
           break;
         case RGB_HUI...RGB_HUD:
           oled_write_P(PSTR("RGB hue: "), false);
@@ -260,18 +260,14 @@ void oled_task_user(void) {
     }
   }
 
-  if (oled_write_2_ln) {
-    oled_write_ln("", false);
-    oled_write_ln("", false);
-  }
-
 #  endif // RGBLIGHT_ENABLE
 
   // Host Keyboard LED Status
   led_t led_state = host_keyboard_led_state();
-  oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
-  oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
-  oled_write_P(led_state.scroll_lock ? PSTR("SCR") : PSTR("   "), false);
+  if (led_state.caps_lock) {
+    oled_set_cursor((oled_max_chars() - 5) / 2, oled_max_lines() / 2);
+    oled_write_P(PSTR("CAPS!"), false);
+  }
 
 #  ifdef OLED_SHOW_FPS
   static uint16_t fps = 0;
