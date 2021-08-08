@@ -38,6 +38,9 @@ enum custom_keycodes {
 #define RAISE  MO(_RAISE)
 #define ADJUST MO(_ADJUST)
 
+#define MSSFULL S(G(KC_3)) // macOS screenshot, fullscreen (Shift+Command+3)
+#define MSSAREA S(G(KC_4)) // macOS screenshot, area (Shift+Command+4)
+
 #define ALT_ESC LALT_T(KC_ESC)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -65,7 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT_reviung41(
     RGB_VAI,   RGB_SAI, RGB_HUI,  RGB_MOD,  XXXXXXX,   RGB_TOG,            OLED_TOG, KC_VOLD,  KC_MUTE,  KC_VOLU,  KC_BRID,  KC_BRIU,
     RGB_VAD,   RGB_SAD, RGB_HUD,  RGB_RMOD, XXXXXXX,   XXXXXXX,            XXXXXXX,  KC_MPRV,  KC_MPLY,  KC_MNXT,  XXXXXXX,  XXXXXXX,
-    XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,   XXXXXXX,            RESET,    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
+    _______,   XXXXXXX, XXXXXXX,  MSSFULL,  MSSAREA,   XXXXXXX,            RESET,    XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,
                                             _______,   _______,  XXXXXXX,  _______,  _______
   ),
 };
