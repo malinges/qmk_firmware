@@ -319,6 +319,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 }
 
+bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
+  return record->event.key.row == 6 && record->event.key.col == 4;
+}
+
 void housekeeping_task_user(void) {
 #ifdef RGBLIGHT_ENABLE
   if (rgb_keycode >= RGB_HUI && rgb_keycode <= RGB_SPD && rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
