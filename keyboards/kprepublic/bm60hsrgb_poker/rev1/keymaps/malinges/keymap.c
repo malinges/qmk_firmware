@@ -219,16 +219,6 @@ static void print_version(void) {
 #define T_MOUSE TG(_mouse)
 #define NXT_PRV TD(TD_M_NXT_PRV)
 
-// Home row mods
-#define LALT_A LALT_T(KC_A)
-#define LCTL_S LCTL_T(KC_S)
-#define LSFT_D LSFT_T(KC_D)
-#define LGUI_F LGUI_T(KC_F)
-#define RGUI_J RGUI_T(KC_J)
-#define RSFT_K RSFT_T(KC_K)
-#define RCTL_L RCTL_T(KC_L)
-#define RALT_SC RALT_T(KC_SCLN)
-
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_M_NXT_PRV] = ACTION_TAP_DANCE_DOUBLE(KC_MNXT, KC_MPRV),
 };
@@ -237,7 +227,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_qwerty] = LAYOUT_60_ansi(
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,
-        ESC_CL,  LALT_A,  LCTL_S,  LSFT_D,  LGUI_F,  KC_G,    KC_H,    RGUI_J,  RSFT_K,  RCTL_L,  RALT_SC, KC_QUOT,          KC_ENT,
+        ESC_CL,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPFN,                            KC_RALT, REC_TOG, KC_RCTL, MO(_fn)
     ),
