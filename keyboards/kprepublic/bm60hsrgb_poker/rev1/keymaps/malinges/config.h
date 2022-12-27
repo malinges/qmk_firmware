@@ -48,5 +48,5 @@
 // #undef ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
 
 // Custom keymap definitions
-#define DEBUG_LAYER
+// #define DEBUG_LAYER
 #define ESC_CL_TERM 300
