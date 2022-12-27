@@ -242,7 +242,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_spcfn] = LAYOUT_60_ansi(
         MAC_LOC, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,
-        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SLCK, KC_PAUS, KC_INS,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PGUP, KC_UP,   KC_PGDN, KC_PSCR, KC_SCRL, KC_PAUS, KC_INS,
         _______, KC_LALT, KC_LCTL, KC_LSFT, KC_LGUI, XXXXXXX, KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT, KC_END,  XXXXXXX,          _______,
         _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______
@@ -256,7 +256,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [_fn] = LAYOUT_60_ansi(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO_DEBUG,
-        XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,KC_BRID, KC_BRIU, RESET,
+        XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,KC_BRID, KC_BRIU, QK_BOOT,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
         KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
@@ -402,14 +402,14 @@ static void rgb_matrix_set_toggle(int led_index, bool toggle_enabled) {
 }
 
 static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, uint8_t led_type) {
-    for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
+    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
         if (HAS_FLAGS(g_led_config.flags[i], led_type)) {
             rgb_matrix_set_color(i, red, green, blue);
         }
     }
 }
 
-void rgb_matrix_indicators_user(void) {
+bool rgb_matrix_indicators_user(void) {
     if (rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
         rgb_timer += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
         process_rgb(rgb_keycode, &rgb_record);
@@ -424,7 +424,7 @@ void rgb_matrix_indicators_user(void) {
         process_wpm(get_current_wpm(), false);
     }
 
-    if (rgb_matrix_get_suspend_state() || !rgb_matrix_config.enable) return;
+    if (rgb_matrix_get_suspend_state() || !rgb_matrix_config.enable) return false;
 
     if (user_config.recording_enabled) {
         if (local_recording) {
@@ -483,7 +483,7 @@ void rgb_matrix_indicators_user(void) {
             // Brightness up / down
             rgb_matrix_set_color(LL_LBRACKET, RGB_DIM_YELLOW);
             rgb_matrix_set_color(LL_RBRACKET, RGB_DIM_YELLOW);
-            // RESET key
+            // QK_BOOT key
             rgb_matrix_set_color(LL_BSLASH, RGB_RED);
 #ifdef NKRO_ENABLE
             // NKRO toggle
@@ -529,4 +529,6 @@ void rgb_matrix_indicators_user(void) {
     if (led_state.caps_lock) {
         rgb_matrix_set_color(LL_CAPSLOCK, RGB_WHITE);
     }
+
+    return false;
 }
