@@ -4,6 +4,19 @@
 #define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
 #define RGB_MATRIX_VAL_STEP 25
 
+// Disable locking switches support
+#undef LOCKING_SUPPORT_ENABLE
+#undef LOCKING_RESYNC_ENABLE
+
+// Disable oneshot support
+#define NO_ACTION_ONESHOT
+
+// Disable music mode
+#define NO_MUSIC_MODE
+
+// Only support up to 8 layers
+#define LAYER_STATE_8BIT
+
 // Disabled RGB Matrix effects
 // #undef ENABLE_RGB_MATRIX_SOLID_COLOR
 // #undef ENABLE_RGB_MATRIX_ALPHAS_MODS

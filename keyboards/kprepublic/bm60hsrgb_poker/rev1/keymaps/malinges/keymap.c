@@ -39,6 +39,7 @@ enum keycodes {
     WPM_TOG,
     MAC_LOC, // macOS lock screen (LCTL+LGUI+Q)
     ESC_CL, // Escape on tap, Caps Lock on hold
+    NKR_TOG, // custom NK_TOGG keycode that doesn't depend on MAGIC_ENABLE
 #ifdef DEBUG_LAYER
     DB_TOGG,
     DB_MTRX,
@@ -258,7 +259,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO_DEBUG,
         XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,KC_BRID, KC_BRIU, QK_BOOT,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
-        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NK_TOGG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NKR_TOG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     ),
 #ifdef DEBUG_LAYER
@@ -343,6 +344,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(KC_ESC);
             } else {
                 unregister_code(KC_CAPS);
+            }
+            return false;
+        case NKR_TOG:
+            if (record->event.pressed) {
+                clear_keyboard();
+                keymap_config.nkro = !keymap_config.nkro;
             }
             return false;
 #ifdef DEBUG_LAYER
