@@ -2,7 +2,7 @@
 #define PERMISSIVE_HOLD
 #define TAPPING_FORCE_HOLD
 #define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
-#define RGB_MATRIX_VAL_STEP 25
+#define RGB_MATRIX_VAL_STEP 20
 
 // Disable locking switches support
 #undef LOCKING_SUPPORT_ENABLE
