@@ -3,6 +3,7 @@
 #define TAPPING_FORCE_HOLD
 #define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
 #define RGB_MATRIX_VAL_STEP 20
+#define RGB_TRIGGER_ON_KEYDOWN
 
 // Disable locking switches support
 #undef LOCKING_SUPPORT_ENABLE
