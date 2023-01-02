@@ -406,7 +406,7 @@ static void rgb_matrix_layer_helper(uint8_t red, uint8_t green, uint8_t blue, ui
     }
 }
 
-bool rgb_matrix_indicators_user(void) {
+void housekeeping_task_user(void) {
     if (rgb_record.event.pressed && timer_elapsed(rgb_timer) >= RGB_TUNING_KEYCODE_REPEAT_INTERVAL) {
         rgb_timer += RGB_TUNING_KEYCODE_REPEAT_INTERVAL;
         process_rgb(rgb_keycode, &rgb_record);
@@ -420,7 +420,9 @@ bool rgb_matrix_indicators_user(void) {
     if (user_config.wpm_enabled && timer_elapsed(wpm_timer) > 1000) {
         process_wpm(get_current_wpm(), false);
     }
+}
 
+bool rgb_matrix_indicators_user(void) {
     if (rgb_matrix_get_suspend_state() || !rgb_matrix_config.enable) return false;
 
     if (user_config.recording_enabled) {
