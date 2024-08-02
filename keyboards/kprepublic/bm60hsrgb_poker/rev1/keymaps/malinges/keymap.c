@@ -50,8 +50,8 @@ enum keycodes {
 #endif
 };
 
-enum td_keycodes {
-    TD_M_NXT_PRV,
+enum td_slots {
+    TD_SLOT_MEDIA,
 };
 
 enum output_messages {
@@ -215,13 +215,21 @@ static void print_version(void) {
 
 #endif
 
-#define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
-#define T_MOUSE TG(_mouse)
-#define NXT_PRV TD(TD_M_NXT_PRV)
+static const uint8_t td_media_keycodes[] = { KC_MPLY, KC_MNXT, KC_MPRV };
+
+static void td_media_cb(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count && state->count - 1 < sizeof(td_media_keycodes) / sizeof(*td_media_keycodes)) {
+        tap_code(td_media_keycodes[state->count - 1]);
+    }
+}
 
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_M_NXT_PRV] = ACTION_TAP_DANCE_DOUBLE(KC_MNXT, KC_MPRV),
+    [TD_SLOT_MEDIA] = ACTION_TAP_DANCE_FN(td_media_cb),
 };
+
+#define KC_SPFN LT(_spcfn, KC_SPC) // press for space, hold for function layer (aka spacefn)
+#define T_MOUSE TG(_mouse)
+#define TD_MDIA TD(TD_SLOT_MEDIA) // tap-dance multimedia keycode
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_qwerty] = LAYOUT_60_ansi(
@@ -249,7 +257,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, MO_DEBUG,
         XXXXXXX, RGB_TOG, WPM_TOG, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, RGB_MOD, RGB_RMOD,KC_BRID, KC_BRIU, QK_BOOT,
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_SPI, RGB_SPD, XXXXXXX, XXXXXXX,          XXXXXXX,
-        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NKR_TOG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          NXT_PRV,
+        KC_MPLY,          KC_VOLD, KC_VOLU, KC_MUTE, XXXXXXX, XXXXXXX, NKR_TOG, T_MOUSE, XXXXXXX, XXXXXXX, XXXXXXX,          TD_MDIA,
         XXXXXXX, XXXXXXX, XXXXXXX,                            KC_SPC,                             XXXXXXX, REN_TOG, XXXXXXX, _______
     ),
 #ifdef DEBUG_LAYER
